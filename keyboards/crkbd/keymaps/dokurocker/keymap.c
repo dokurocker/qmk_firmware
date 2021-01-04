@@ -25,17 +25,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 enum custom_keycodes {
     KC_LOWR = SAFE_RANGE,
-    KC_RASE
+    KC_RASE,
+    // JIS配列をUS配列にする
+    JU_2,
+    JU_6,
+    JU_7,
+    JU_8,
+    JU_9,
+    JU_0,
+    JU_MINS,
+    JU_EQL,
+    JU_LBRC,
+    JU_RBRC,
+    JU_BSLS,
+    JU_SCLN,
+    JU_QUOT,
+    JU_GRV
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_DEFAULT] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-       KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,  KC_BSPC,
+       KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,  JU_MINS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
+      KC_LCTL,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, JU_SCLN, JU_QUOT,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,  KC_ESC,
+      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_BSPC,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI, KC_LOWR, KC_SPC,      KC_ENT, KC_RASE, KC_RALT
                                       //`--------------------------'  `--------------------------'
@@ -44,11 +59,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_LOWER] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-       KC_TAB,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                         KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_BSPC,
+       KC_ESC,    KC_1,    JU_2,    KC_3,    KC_4,    KC_5,                         JU_6,    JU_7,    JU_8,    JU_9,    JU_0,  JU_EQL,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_LEFT, KC_DOWN,   KC_UP,KC_RIGHT, XXXXXXX, XXXXXXX,
+      KC_LCTL, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_LEFT, KC_DOWN,   KC_UP,KC_RIGHT, JU_LBRC, JU_RBRC,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, JU_BSLS,  KC_DEL,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_RALT
                                       //`--------------------------'  `--------------------------'
@@ -56,7 +71,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_RAISE] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-       KC_TAB, KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC,                      KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_BSPC,
+       KC_TAB, KC_EXLM, KC_LBRC, KC_HASH,  KC_DLR, KC_PERC,                       KC_EQL, KC_CIRC, KC_DQUO, KC_ASTR, KC_LPRN, KC_BSPC,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LCTL, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_MINS,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS,  KC_GRV,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -241,6 +256,158 @@ bool change_layer(uint16_t keycode, bool pressed) {
     return false;
 }
 
+// JIS配列をUS配列として入力
+bool input_jis2us(uint16_t keycode, bool pressed)
+{
+    bool lshift = false;
+    bool rshift = false;
+    if (!pressed) {
+        return true;
+    }
+    lshift = keyboard_report->mods & MOD_BIT(KC_LSFT);
+    rshift = keyboard_report->mods & MOD_BIT(KC_RSFT);
+    switch (keycode)
+    {
+        case JU_2:
+            if (lshift || rshift) {
+                if (lshift) {
+                    unregister_code(KC_LSFT);
+                }
+                if (rshift) {
+                    unregister_code(KC_RSFT);
+                }
+                tap_code(KC_LBRACKET);
+                if (lshift) {
+                    register_code(KC_LSFT);
+                }
+                if (rshift) {
+                    register_code(KC_RSFT);
+                }
+            } else {
+                tap_code(KC_2);
+            }
+            break;
+        case JU_6:
+            if (lshift || rshift) {
+                if (lshift) {
+                    unregister_code(KC_LSFT);
+                }
+                if (rshift) {
+                    unregister_code(KC_RSFT);
+                }
+                tap_code(KC_EQUAL);
+                if (lshift) {
+                    register_code(KC_LSFT);
+                }
+                if (rshift) {
+                    register_code(KC_RSFT);
+                }
+            } else {
+                tap_code(KC_6);
+            }
+            break;
+        case JU_7:
+            if (lshift || rshift) {
+                tap_code(KC_6);
+            } else {
+                tap_code(KC_7);
+            }
+            break;
+        case JU_8:
+            if (lshift || rshift) {
+                tap_code(KC_QUOTE);
+            } else {
+                tap_code(KC_8);
+            }
+            break;
+        case JU_9:
+            if (lshift || rshift) {
+                tap_code(KC_8);
+            } else {
+                tap_code(KC_9);
+            }
+            break;
+        case JU_0:
+            if (lshift || rshift) {
+                tap_code(KC_9);
+            } else {
+                tap_code(KC_0);
+            }
+            break;
+        case JU_MINS:
+            if (lshift || rshift) {
+                tap_code(KC_INT1);
+            } else {
+                tap_code(KC_MINUS);
+            }
+            break;
+        case JU_EQL:
+            if (lshift || rshift) {
+                tap_code(KC_SCOLON);
+            } else {
+                tap_code16(S(KC_MINUS));
+            }
+            break;
+        case JU_LBRC:
+            if (lshift || rshift) {
+                tap_code(KC_RBRACKET);
+            } else {
+                tap_code(KC_RBRACKET);
+            }
+            break;
+        case JU_RBRC:
+            if (lshift || rshift) {
+                tap_code(KC_NONUS_HASH);
+            } else {
+                tap_code(KC_NONUS_HASH);
+            }
+            break;
+        case JU_BSLS:
+            if (lshift || rshift) {
+                tap_code(KC_INT3);
+            } else {
+                tap_code(KC_INT1);
+            }
+            break;
+        case JU_SCLN:
+            if (lshift || rshift) {
+                if (lshift) {
+                    unregister_code(KC_LSFT);
+                }
+                if (rshift) {
+                    unregister_code(KC_RSFT);
+                }
+                tap_code(KC_QUOTE);
+                if (lshift) {
+                    register_code(KC_LSFT);
+                }
+                if (rshift) {
+                    register_code(KC_RSFT);
+                }
+            } else {
+                tap_code(KC_SCOLON);
+            }
+            break;
+        case JU_QUOT:
+            if (lshift || rshift) {
+                tap_code(KC_2);
+            } else {
+                tap_code16(S(KC_7));
+            }
+            break;
+        case JU_GRV:
+            if (lshift || rshift) {
+                tap_code(KC_LBRACKET);
+            } else {
+                tap_code16(S(KC_EQUAL));
+            }
+            break;
+        default:
+            return true;
+    }
+    return false;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   bool ret = true;
   if (record->event.pressed) {
@@ -248,6 +415,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
   ret = input_zenhankaku(keycode, record->event.pressed);
   ret = ret & change_layer(keycode, record->event.pressed);
+  ret = ret & input_jis2us(keycode, record->event.pressed);
   return ret;
 }
 #endif // OLED_DRIVER_ENABLE
