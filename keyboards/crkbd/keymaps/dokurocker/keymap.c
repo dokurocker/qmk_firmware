@@ -65,7 +65,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT,C(A(KC_DEL)), KC_F2, KC_F3,   KC_F4,   KC_F5,                       KC_F11,  KC_F12,   KC_F1, XXXXXXX, JU_BSLS,  KC_DEL,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, _______,  KC_SPC,  A(KC_ENT), _______, KC_RALT
+                                          KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_RALT
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -73,9 +73,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        JU_GRV, KC_EXLM, KC_LBRC, KC_HASH,  KC_DLR, KC_PERC,                       KC_EQL, KC_CIRC, KC_DQUO, KC_ASTR, KC_LPRN, KC_BSPC,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL, C(KC_A), C(KC_S), C(KC_D), C(KC_F), C(KC_G),                      KC_MINS,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS,  KC_GRV,
+      KC_LCTL, C(KC_A), C(KC_S), C(KC_D), C(KC_F), C(KC_G),                      C(KC_H), C(KC_J), C(KC_K), C(KC_L),C(JU_SCLN),KC_RCTL,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT, C(KC_Z), C(KC_X), C(KC_C), C(KC_V), C(KC_B),                      KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE, KC_TILD,
+      KC_LSFT, C(KC_Z), C(KC_X), C(KC_C), C(KC_V), C(KC_B),                      C(KC_N), C(KC_M),C(KC_COMM),C(KC_DOT),C(KC_SLSH),KC_RSFT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_RALT
                                       //`--------------------------'  `--------------------------'
@@ -231,6 +231,42 @@ bool input_zenhankaku(uint16_t keycode, bool pressed) {
     }
 }
 
+// winキーの動作変更
+static uint16_t pressed_gui_keycode = 0;
+static bool pressed_gui = false;
+
+bool input_gui(uint16_t keycode, bool pressed) {
+    switch (keycode) {
+        case KC_LGUI:
+        case KC_RGUI:
+            if (pressed) {
+                pressed_gui_keycode = keycode;
+            } else {
+                if (pressed_gui) {
+                    unregister_code(pressed_gui_keycode);
+                } else {
+                    tap_code(pressed_gui_keycode);
+                }
+                pressed_gui_keycode = 0;
+                pressed_gui = false;
+            }
+            return false;
+        case KC_TAB: // alt + tab (windows)
+        case KC_ENTER: // alt + enter (excel セル内で改行)
+            if (pressed_gui_keycode > 0 && !pressed_gui && pressed) {
+                // Alt
+                pressed_gui_keycode = pressed_gui_keycode == KC_LGUI ? KC_LALT : KC_RALT;
+            }
+            // break;
+        default:
+            if (pressed_gui_keycode > 0 && !pressed_gui && pressed) {
+                pressed_gui = true;
+                register_code(pressed_gui_keycode);
+            }
+            break;
+    }
+    return true;
+}
 // レイヤー変更
 bool change_layer(uint16_t keycode, bool pressed) {
     switch (keycode) {
@@ -414,6 +450,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     set_keylog(keycode, record);
   }
   ret = input_zenhankaku(keycode, record->event.pressed);
+  ret = ret & input_gui(keycode, record->event.pressed);
   ret = ret & change_layer(keycode, record->event.pressed);
   ret = ret & input_jis2us(keycode, record->event.pressed);
   return ret;
