@@ -50,7 +50,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LCTL,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, JU_SCLN, JU_QUOT,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_BSPC,
+      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_RSFT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI, KC_LOWR, KC_SPC,      KC_ENT, KC_RASE, KC_RALT
                                       //`--------------------------'  `--------------------------'
@@ -63,9 +63,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LCTL,   KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,                      KC_LEFT, KC_DOWN,   KC_UP,KC_RIGHT, JU_LBRC, JU_RBRC,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT,C(A(KC_DEL)), KC_F2, KC_F3,   KC_F4,   KC_F5,                       KC_F11,  KC_F12,   KC_F1, XXXXXXX, JU_BSLS,  KC_DEL,
+      KC_LSFT,C(A(KC_DEL)), KC_F2, KC_F3,   KC_F4,   KC_F5,                       KC_F11,  KC_F12,   KC_F1, XXXXXXX, JU_BSLS, KC_RSFT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_RALT
+                                          KC_LGUI, _______,  KC_SPC,     KC_DEL, _______, KC_RALT
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -77,7 +77,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, C(KC_Z), C(KC_X), C(KC_C), C(KC_V), C(KC_B),                      C(KC_N), C(KC_M),C(KC_COMM),C(KC_DOT),C(KC_SLSH),KC_RSFT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_RALT
+                                          KC_LGUI, _______, KC_BSPC,     KC_ENT, _______, KC_RALT
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -232,7 +232,7 @@ bool input_zenhankaku(uint16_t keycode, bool pressed) {
 }
 
 // winキーの動作変更
-static uint16_t pressed_gui_keycode = 0;
+static uint16_t pressed_gui_keycode = XXXXXXX;
 static bool pressed_gui = false;
 
 bool input_gui(uint16_t keycode, bool pressed) {
@@ -247,19 +247,19 @@ bool input_gui(uint16_t keycode, bool pressed) {
                 } else {
                     tap_code(pressed_gui_keycode);
                 }
-                pressed_gui_keycode = 0;
+                pressed_gui_keycode = XXXXXXX;
                 pressed_gui = false;
             }
             return false;
         case KC_TAB: // alt + tab (windows)
         case KC_ENTER: // alt + enter (excel セル内で改行)
-            if (pressed_gui_keycode > 0 && !pressed_gui && pressed) {
+            if (pressed_gui_keycode != XXXXXXX && !pressed_gui && pressed) {
                 // Alt
                 pressed_gui_keycode = pressed_gui_keycode == KC_LGUI ? KC_LALT : KC_RALT;
             }
             // break;
         default:
-            if (pressed_gui_keycode > 0 && !pressed_gui && pressed) {
+            if (pressed_gui_keycode != XXXXXXX && !pressed_gui && pressed) {
                 pressed_gui = true;
                 register_code(pressed_gui_keycode);
             }
