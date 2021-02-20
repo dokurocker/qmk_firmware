@@ -293,17 +293,98 @@ bool change_layer(uint16_t keycode, bool pressed) {
 }
 
 // JIS配列をUS配列として入力
+// 押されてる状態で別のキーを押されたら離す
+// shift: shiftのみ同時押しは後勝ち？
+// shift + 何か押しているとき、ほかのシフト押されたら、離して、今押したのが有効になる
+typedef struct {
+    bool pressed;
+    uint16_t us_keycode;
+    uint16_t shifted_us_keycode;
+} jis2us_key;
+
+static jis2us_key current_jis2us_key = {
+    false,
+    XXXXXXX,
+    XXXXXXX
+};
+//static uint16_t pressed_sht_keycode = XXXXXXX;
+
 bool input_jis2us(uint16_t keycode, bool pressed)
 {
+    // uint16_t key = XXXXXXX;
+    bool shifted = false;
     bool lshift = false;
     bool rshift = false;
-    if (!pressed) {
+    if (keycode != JU_7 && keycode != KC_LSFT  && keycode != KC_RSFT && !pressed) {
         return true;
     }
-    lshift = keyboard_report->mods & MOD_BIT(KC_LSFT);
-    rshift = keyboard_report->mods & MOD_BIT(KC_RSFT);
+    // 2 shift押下時キャンセルが必要
+    // 7 shift押下時別のキーにする
+    // eql shift押していない時、shift必要
+    // 長押しの挙動
+    // 先にshiftオフ、shiftを押してない状態で長押し続行
+    // 　その後、shift押すとshift以外が離した状態になる
+    // 　これは、shift押してなくても同じ
+    // これに極限まで近づける
+    lshift = keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT));
+    shifted = keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT));
+    //rshift = keyboard_report->mods & MOD_BIT(KC_RSFT);
     switch (keycode)
     {
+        case KC_LSFT:
+        case KC_RSFT:
+            uprintf(
+                "%s:%s>%d,%d\n",
+                keycode == KC_LSFT ? "lshift" : "rshift",
+                pressed ? "pressed" : "unpressed",
+                shifted,
+                current_jis2us_key.pressed
+            );
+            if (current_jis2us_key.pressed
+                && !pressed
+                && ((keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) ^ ~MOD_BIT(keycode))
+            ) {
+                unregister_code(keycode);
+                unregister_code(current_jis2us_key.shifted_us_keycode);
+                register_code(current_jis2us_key.us_keycode);
+                current_jis2us_key.pressed = false;
+            }
+            return true;
+            // if (pressed) {
+            //     if (pressed_sht_keycode != XXXXXXX) {
+            //         // すでに別のshiftが押されている
+            //         unregister_code(pressed_sht_keycode);
+            //         pressed_sht_keycode = keycode;
+            //     }
+            //     if (pressed_us_keycode != XXXXXXX) {
+            //         // 変換を加えているキーが押されている状態
+            //         unregister_code(pressed_us_keycode);
+            //         pressed_us_keycode = XXXXXXX;
+            //     }
+            //     return true;
+            // }
+            // return true;
+            break;
+        case JU_7:
+            current_jis2us_key.us_keycode = KC_7;
+            current_jis2us_key.shifted_us_keycode = KC_6;
+            // key = shifted ? KC_6 : KC_7;
+            if (pressed) {
+                register_code(shifted ? current_jis2us_key.shifted_us_keycode : current_jis2us_key.us_keycode);
+                current_jis2us_key.pressed = true;
+            } else {
+                unregister_code(shifted ? current_jis2us_key.shifted_us_keycode : current_jis2us_key.us_keycode);
+                current_jis2us_key.pressed = false;
+             }
+            return false;
+        default:
+            uprintf(
+                "%s>l:%d,r:%d\n",
+                pressed ? "pressed" : "unpressed",
+                lshift,
+                rshift
+            );
+            return true;
         case JU_2:
             if (lshift || rshift) {
                 if (lshift) {
@@ -340,13 +421,6 @@ bool input_jis2us(uint16_t keycode, bool pressed)
                 }
             } else {
                 tap_code(KC_6);
-            }
-            break;
-        case JU_7:
-            if (lshift || rshift) {
-                tap_code(KC_6);
-            } else {
-                tap_code(KC_7);
             }
             break;
         case JU_8:
@@ -438,8 +512,6 @@ bool input_jis2us(uint16_t keycode, bool pressed)
                 tap_code16(S(KC_LBRACKET));
             }
             break;
-        default:
-            return true;
     }
     return false;
 }
