@@ -332,15 +332,19 @@ void set_jis2us_key_info(jis2us_key_info *info, uint16_t a, bool a_s, uint16_t b
 // 長押し状態でほかのキー押された
 // →シフトを話した時の動作キャンセルして、押下中のキーは強制てきにunregist
 
-void register_jis2us(jis2us_key_info *info, bool pressed, bool shifted)
+void register_jis2us(jis2us_key_info *info, bool pressed, uint8_t mods)
 {
-    uprintf("%d,%d\n", pressed, shifted);
+    uprintf("%d %d\n", mods, keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT)));
     if (pressed) {
-        if (shifted) {
+        if (mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) {
             if (!info->shifted_key.needs_shift) {
                 // シフトキーをオフ
-                unregister_code(KC_LSFT);
-                unregister_code(KC_RSFT);
+                if (mods & MOD_BIT(KC_LSFT)) {
+                    unregister_code(KC_LSFT);
+                }
+                if (mods & MOD_BIT(KC_RSFT)) {
+                    unregister_code(KC_RSFT);
+                }
             }
             register_code(info->shifted_key.us_keycode);
             info->shifted = true;
@@ -357,10 +361,12 @@ void register_jis2us(jis2us_key_info *info, bool pressed, bool shifted)
         if (info->shifted) {
             unregister_code(info->shifted_key.us_keycode);
             if (!info->shifted_key.needs_shift) {
-                // シフトを戻すかどうかの判定って厳しくない？
-                // unregisterししゃうので、本当に離されたか、わからない←本当？
-                // 本当に離されてなければ、続行ってできるか？
-                register_code(KC_LSFT);
+                if (mods & MOD_BIT(KC_LSFT)) {
+                    register_code(KC_LSFT);
+                }
+                if (mods & MOD_BIT(KC_RSFT)) {
+                    register_code(KC_RSFT);
+                }
             }
         } else {
             if (info->key.needs_shift) {
@@ -388,7 +394,8 @@ bool input_jis2us(uint16_t keycode, bool pressed)
             false,
         }
     };
-    bool shifted = false;
+    static uint8_t mods = 0; // keyboard_report->modsとは別に、独自でmodsを持つ
+    // bool shifted = false;
     // 2 shift押下時キャンセルが必要
     // 7 shift押下時別のキーにする
     // eql shift押していない時、shift必要
@@ -397,12 +404,17 @@ bool input_jis2us(uint16_t keycode, bool pressed)
     // 　その後、shift押すとshift以外が離した状態になる
     // 　これは、shift押してなくても同じ
     // これに極限まで近づける
-    shifted = keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT));
+    //shifted = keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT));
 
     switch (keycode)
     {
         case KC_LSFT:
         case KC_RSFT:
+            if (pressed) {
+                mods |= MOD_BIT(keycode); 
+            } else {
+                mods &= ~MOD_BIT(keycode);
+            }
             if (current_jis2us_key_info.pressed
                 && current_jis2us_key_info.shifted
                 && !pressed
@@ -427,59 +439,59 @@ bool input_jis2us(uint16_t keycode, bool pressed)
             return true;
         case JU_2:
             set_jis2us_key_info(&current_jis2us_key_info, KC_2, false, KC_LBRACKET, false);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_6:
             set_jis2us_key_info(&current_jis2us_key_info, KC_6, false, KC_EQUAL, false);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_7:
             set_jis2us_key_info(&current_jis2us_key_info, KC_7, false, KC_6, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_8:
             set_jis2us_key_info(&current_jis2us_key_info, KC_8, false, KC_QUOTE, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_9:
             set_jis2us_key_info(&current_jis2us_key_info, KC_9, false, KC_8, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_0:
             set_jis2us_key_info(&current_jis2us_key_info, KC_0, false, KC_9, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_MINS:
             set_jis2us_key_info(&current_jis2us_key_info, KC_MINUS, false, KC_INT1, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_EQL:
             set_jis2us_key_info(&current_jis2us_key_info, KC_MINUS, true, KC_SCOLON, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_LBRC:
             set_jis2us_key_info(&current_jis2us_key_info, KC_RBRACKET, false, KC_RBRACKET, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_RBRC:
             set_jis2us_key_info(&current_jis2us_key_info, KC_NONUS_HASH, false, KC_NONUS_HASH, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_BSLS:
             set_jis2us_key_info(&current_jis2us_key_info, KC_INT1, false, KC_INT3, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_SCLN:
             set_jis2us_key_info(&current_jis2us_key_info, KC_SCOLON, false, KC_QUOTE, false);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_QUOT:
             set_jis2us_key_info(&current_jis2us_key_info, KC_7, true, KC_2, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_GRV:
             set_jis2us_key_info(&current_jis2us_key_info, KC_LBRACKET, true, KC_EQUAL, true);
-            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         default:
             return true;
