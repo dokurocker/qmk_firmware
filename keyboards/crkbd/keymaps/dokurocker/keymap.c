@@ -297,27 +297,98 @@ bool change_layer(uint16_t keycode, bool pressed) {
 // shift: shiftのみ同時押しは後勝ち？
 // shift + 何か押しているとき、ほかのシフト押されたら、離して、今押したのが有効になる
 typedef struct {
-    bool pressed;
-    uint16_t us_keycode;
-    uint16_t shifted_us_keycode;
+    uint16_t us_keycode; // US配列でのキーコード
+    bool needs_shift; // shiftキー必要かどうか
 } jis2us_key;
 
-static jis2us_key current_jis2us_key = {
-    false,
-    XXXXXXX,
-    XXXXXXX
-};
-//static uint16_t pressed_sht_keycode = XXXXXXX;
+typedef struct {
+    bool pressed; // 押されている状態かどうか
+    bool shifted; // shiftを押した状態だったか
+    jis2us_key key; // 変換後のキー
+    jis2us_key shifted_key; // シフト押下時のキー
+} jis2us_key_info;
+
+void set_jis2us_key_info(jis2us_key_info *info, uint16_t a, bool a_s, uint16_t b, bool b_s)
+{
+    info->key.us_keycode = a;
+    info->key.needs_shift = a_s;
+    info->shifted_key.us_keycode = b;
+    info->shifted_key.needs_shift = b_s;
+}
+
+// ・shiftとの長押し
+// ・押してるときにshift離されたらどうするか
+// ・7 のパターン（shift押した時は違うキーのシフト）
+// →7 に戻す
+// シフトはオフにして、7を押す
+
+// ・2のパターン（shift押したときは違うキーシフトなし）
+// →2に戻す
+// シフトはすでにオフ
+// 単純に2を押す
+
+// ・=のパターン（シフトは違うキーのシフト、シフトないときは違うキーのシフト月）
+
+// 長押し状態でほかのキー押された
+// →シフトを話した時の動作キャンセルして、押下中のキーは強制てきにunregist
+
+void register_jis2us(jis2us_key_info *info, bool pressed, bool shifted)
+{
+    uprintf("%d,%d\n", pressed, shifted);
+    if (pressed) {
+        if (shifted) {
+            if (!info->shifted_key.needs_shift) {
+                // シフトキーをオフ
+                unregister_code(KC_LSFT);
+                unregister_code(KC_RSFT);
+            }
+            register_code(info->shifted_key.us_keycode);
+            info->shifted = true;
+        } else {
+            if (info->key.needs_shift) {
+                register_code16(S(info->key.us_keycode));
+            } else {
+                register_code(info->key.us_keycode);
+            }
+            info->shifted = false;
+        }
+        info->pressed = true;
+    } else {
+        if (info->shifted) {
+            unregister_code(info->shifted_key.us_keycode);
+            if (!info->shifted_key.needs_shift) {
+                // シフトを戻すかどうかの判定って厳しくない？
+                // unregisterししゃうので、本当に離されたか、わからない←本当？
+                // 本当に離されてなければ、続行ってできるか？
+                register_code(KC_LSFT);
+            }
+        } else {
+            if (info->key.needs_shift) {
+                unregister_code16(S(info->key.us_keycode));
+            } else {
+                unregister_code(info->key.us_keycode);
+            }
+        }
+        info->pressed = false;
+        info->shifted = false;
+    }
+}
 
 bool input_jis2us(uint16_t keycode, bool pressed)
 {
-    // uint16_t key = XXXXXXX;
+    static jis2us_key_info current_jis2us_key_info = {
+        false,
+        false,
+        {
+            XXXXXXX,
+            false,
+        },
+        {
+            XXXXXXX,
+            false,
+        }
+    };
     bool shifted = false;
-    bool lshift = false;
-    bool rshift = false;
-    if (keycode != JU_7 && keycode != KC_LSFT  && keycode != KC_RSFT && !pressed) {
-        return true;
-    }
     // 2 shift押下時キャンセルが必要
     // 7 shift押下時別のキーにする
     // eql shift押していない時、shift必要
@@ -326,194 +397,94 @@ bool input_jis2us(uint16_t keycode, bool pressed)
     // 　その後、shift押すとshift以外が離した状態になる
     // 　これは、shift押してなくても同じ
     // これに極限まで近づける
-    lshift = keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT));
     shifted = keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT));
-    //rshift = keyboard_report->mods & MOD_BIT(KC_RSFT);
+
     switch (keycode)
     {
         case KC_LSFT:
         case KC_RSFT:
-            uprintf(
-                "%s:%s>%d,%d\n",
-                keycode == KC_LSFT ? "lshift" : "rshift",
-                pressed ? "pressed" : "unpressed",
-                shifted,
-                current_jis2us_key.pressed
-            );
-            if (current_jis2us_key.pressed
+            if (current_jis2us_key_info.pressed
+                && current_jis2us_key_info.shifted
                 && !pressed
                 && ((keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) ^ ~MOD_BIT(keycode))
             ) {
-                unregister_code(keycode);
-                unregister_code(current_jis2us_key.shifted_us_keycode);
-                register_code(current_jis2us_key.us_keycode);
-                current_jis2us_key.pressed = false;
+                // 現在JISキーをUSキーに変換中
+                // シフトキーが離されて
+                // その結果、シフトキーオフ状態になる
+                if (current_jis2us_key_info.shifted_key.needs_shift) {
+                    unregister_code(keycode); // シフトキーを離した状態にする
+                }
+                unregister_code(current_jis2us_key_info.shifted_key.us_keycode);
+                if (current_jis2us_key_info.key.needs_shift) {
+                    register_code16(S(current_jis2us_key_info.key.us_keycode));
+                } else {
+                    register_code(current_jis2us_key_info.key.us_keycode);
+                }
+                current_jis2us_key_info.pressed = false;
+                current_jis2us_key_info.shifted = false;
+                return false;
             }
-            return true;
-            // if (pressed) {
-            //     if (pressed_sht_keycode != XXXXXXX) {
-            //         // すでに別のshiftが押されている
-            //         unregister_code(pressed_sht_keycode);
-            //         pressed_sht_keycode = keycode;
-            //     }
-            //     if (pressed_us_keycode != XXXXXXX) {
-            //         // 変換を加えているキーが押されている状態
-            //         unregister_code(pressed_us_keycode);
-            //         pressed_us_keycode = XXXXXXX;
-            //     }
-            //     return true;
-            // }
-            // return true;
-            break;
-        case JU_7:
-            current_jis2us_key.us_keycode = KC_7;
-            current_jis2us_key.shifted_us_keycode = KC_6;
-            // key = shifted ? KC_6 : KC_7;
-            if (pressed) {
-                register_code(shifted ? current_jis2us_key.shifted_us_keycode : current_jis2us_key.us_keycode);
-                current_jis2us_key.pressed = true;
-            } else {
-                unregister_code(shifted ? current_jis2us_key.shifted_us_keycode : current_jis2us_key.us_keycode);
-                current_jis2us_key.pressed = false;
-             }
-            return false;
-        default:
-            uprintf(
-                "%s>l:%d,r:%d\n",
-                pressed ? "pressed" : "unpressed",
-                lshift,
-                rshift
-            );
             return true;
         case JU_2:
-            if (lshift || rshift) {
-                if (lshift) {
-                    unregister_code(KC_LSFT);
-                }
-                if (rshift) {
-                    unregister_code(KC_RSFT);
-                }
-                tap_code(KC_LBRACKET);
-                if (lshift) {
-                    register_code(KC_LSFT);
-                }
-                if (rshift) {
-                    register_code(KC_RSFT);
-                }
-            } else {
-                tap_code(KC_2);
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_2, false, KC_LBRACKET, false);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_6:
-            if (lshift || rshift) {
-                if (lshift) {
-                    unregister_code(KC_LSFT);
-                }
-                if (rshift) {
-                    unregister_code(KC_RSFT);
-                }
-                tap_code(KC_EQUAL);
-                if (lshift) {
-                    register_code(KC_LSFT);
-                }
-                if (rshift) {
-                    register_code(KC_RSFT);
-                }
-            } else {
-                tap_code(KC_6);
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_6, false, KC_EQUAL, false);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
+        case JU_7:
+            set_jis2us_key_info(&current_jis2us_key_info, KC_7, false, KC_6, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_8:
-            if (lshift || rshift) {
-                tap_code(KC_QUOTE);
-            } else {
-                tap_code(KC_8);
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_8, false, KC_QUOTE, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_9:
-            if (lshift || rshift) {
-                tap_code(KC_8);
-            } else {
-                tap_code(KC_9);
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_9, false, KC_8, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_0:
-            if (lshift || rshift) {
-                tap_code(KC_9);
-            } else {
-                tap_code(KC_0);
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_0, false, KC_9, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_MINS:
-            if (lshift || rshift) {
-                tap_code(KC_INT1);
-            } else {
-                tap_code(KC_MINUS);
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_MINUS, false, KC_INT1, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_EQL:
-            if (lshift || rshift) {
-                tap_code(KC_SCOLON);
-            } else {
-                tap_code16(S(KC_MINUS));
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_MINUS, true, KC_SCOLON, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_LBRC:
-            if (lshift || rshift) {
-                tap_code(KC_RBRACKET);
-            } else {
-                tap_code(KC_RBRACKET);
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_RBRACKET, false, KC_RBRACKET, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_RBRC:
-            if (lshift || rshift) {
-                tap_code(KC_NONUS_HASH);
-            } else {
-                tap_code(KC_NONUS_HASH);
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_NONUS_HASH, false, KC_NONUS_HASH, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_BSLS:
-            if (lshift || rshift) {
-                tap_code(KC_INT3);
-            } else {
-                tap_code(KC_INT1);
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_INT1, false, KC_INT3, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_SCLN:
-            if (lshift || rshift) {
-                if (lshift) {
-                    unregister_code(KC_LSFT);
-                }
-                if (rshift) {
-                    unregister_code(KC_RSFT);
-                }
-                tap_code(KC_QUOTE);
-                if (lshift) {
-                    register_code(KC_LSFT);
-                }
-                if (rshift) {
-                    register_code(KC_RSFT);
-                }
-            } else {
-                tap_code(KC_SCOLON);
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_SCOLON, false, KC_QUOTE, false);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_QUOT:
-            if (lshift || rshift) {
-                tap_code(KC_2);
-            } else {
-                tap_code16(S(KC_7));
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_7, true, KC_2, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
         case JU_GRV:
-            if (lshift || rshift) {
-                tap_code(KC_EQUAL);
-            } else {
-                tap_code16(S(KC_LBRACKET));
-            }
-            break;
+            set_jis2us_key_info(&current_jis2us_key_info, KC_LBRACKET, true, KC_EQUAL, true);
+            register_jis2us(&current_jis2us_key_info, pressed, shifted);
+            return true;
+        default:
+            return true;
     }
-    return false;
+    return true;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
