@@ -7,7 +7,6 @@ typedef struct {
 
 typedef struct {
     bool pressed; // 押されている状態かどうか
-    bool shifted; // shiftを押した状態だったか
     jis2us_key key; // 変換後のキー
     jis2us_key shifted_key; // シフト押下時のキー
 } jis2us_key_info;
@@ -20,25 +19,16 @@ static void set_jis2us_key_info(jis2us_key_info *info, uint16_t a, bool a_s, uin
     info->shifted_key.needs_shift = b_s;
 }
 
-// ・shiftとの長押し
-// ・押してるときにshift離されたらどうするか
-// ・7 のパターン（shift押した時は違うキーのシフト）
-// →7 に戻す
-// シフトはオフにして、7を押す
-
-// ・2のパターン（shift押したときは違うキーシフトなし）
-// →2に戻す
-// シフトはすでにオフ
-// 単純に2を押す
-
-// ・=のパターン（シフトは違うキーのシフト、シフトないときは違うキーのシフト月）
-
-// 長押し状態でほかのキー押された
-// →シフトを話した時の動作キャンセルして、押下中のキーは強制てきにunregist
+// shift + 長押しの挙動
+//   shiftを離す : shiftを押していない状態の長押しに変わる
+// 長押し後にshiftを押す
+//   押していたキーはキャンセルされる
+// 2(@) : shiftが他のキー（他 6 等）
+// 7(&) : shiftが他のキーのshift（他 8 等）
+// =(+) : 他のキーのshift、shiftも他のキーのshift（他 ` 等）
 
 static void register_jis2us(jis2us_key_info *info, bool pressed, uint8_t mods)
 {
-    uprintf("%d %d\n", mods, keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT)));
     if (pressed) {
         if (mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) {
             if (!info->shifted_key.needs_shift) {
@@ -51,18 +41,16 @@ static void register_jis2us(jis2us_key_info *info, bool pressed, uint8_t mods)
                 }
             }
             register_code(info->shifted_key.us_keycode);
-            info->shifted = true;
         } else {
             if (info->key.needs_shift) {
                 register_code16(S(info->key.us_keycode));
             } else {
                 register_code(info->key.us_keycode);
             }
-            info->shifted = false;
         }
         info->pressed = true;
     } else {
-        if (info->shifted) {
+        if (mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) {
             unregister_code(info->shifted_key.us_keycode);
             if (!info->shifted_key.needs_shift) {
                 if (mods & MOD_BIT(KC_LSFT)) {
@@ -80,14 +68,12 @@ static void register_jis2us(jis2us_key_info *info, bool pressed, uint8_t mods)
             }
         }
         info->pressed = false;
-        info->shifted = false;
     }
 }
 
 bool input_jis2us(uint16_t keycode, bool pressed)
 {
     static jis2us_key_info current_jis2us_key_info = {
-        false,
         false,
         {
             XXXXXXX,
@@ -99,16 +85,6 @@ bool input_jis2us(uint16_t keycode, bool pressed)
         }
     };
     static uint8_t mods = 0; // keyboard_report->modsとは別に、独自でmodsを持つ
-    // bool shifted = false;
-    // 2 shift押下時キャンセルが必要
-    // 7 shift押下時別のキーにする
-    // eql shift押していない時、shift必要
-    // 長押しの挙動
-    // 先にshiftオフ、shiftを押してない状態で長押し続行
-    // 　その後、shift押すとshift以外が離した状態になる
-    // 　これは、shift押してなくても同じ
-    // これに極限まで近づける
-    //shifted = keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT));
 
     switch (keycode)
     {
@@ -116,29 +92,33 @@ bool input_jis2us(uint16_t keycode, bool pressed)
         case KC_RSFT:
             if (pressed) {
                 mods |= MOD_BIT(keycode); 
+                if (current_jis2us_key_info.pressed
+                    && ~mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))
+                ) {
+                    // JIS -> US変換中（shiftキー離した状態）でshiftを押されたら、離す
+                    register_jis2us(&current_jis2us_key_info, false, mods);
+                }
             } else {
                 mods &= ~MOD_BIT(keycode);
-            }
-            if (current_jis2us_key_info.pressed
-                && current_jis2us_key_info.shifted
-                && !pressed
-                && ((keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) ^ ~MOD_BIT(keycode))
-            ) {
-                // 現在JISキーをUSキーに変換中
-                // シフトキーが離されて
-                // その結果、シフトキーオフ状態になる
-                if (current_jis2us_key_info.shifted_key.needs_shift) {
-                    unregister_code(keycode); // シフトキーを離した状態にする
+                if (current_jis2us_key_info.pressed
+                    && mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))
+                    && ((keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) ^ ~MOD_BIT(keycode))
+                ) {
+                    // 現在JISキーをUSキーに変換中
+                    // シフトキーが離されて
+                    // その結果、シフトキーオフ状態になる
+                    if (current_jis2us_key_info.shifted_key.needs_shift) {
+                        unregister_code(keycode); // シフトキーを離した状態にする
+                    }
+                    unregister_code(current_jis2us_key_info.shifted_key.us_keycode);
+                    if (current_jis2us_key_info.key.needs_shift) {
+                        register_code16(S(current_jis2us_key_info.key.us_keycode));
+                    } else {
+                        register_code(current_jis2us_key_info.key.us_keycode);
+                    }
+                    current_jis2us_key_info.pressed = false;
+                    return false;
                 }
-                unregister_code(current_jis2us_key_info.shifted_key.us_keycode);
-                if (current_jis2us_key_info.key.needs_shift) {
-                    register_code16(S(current_jis2us_key_info.key.us_keycode));
-                } else {
-                    register_code(current_jis2us_key_info.key.us_keycode);
-                }
-                current_jis2us_key_info.pressed = false;
-                current_jis2us_key_info.shifted = false;
-                return false;
             }
             return true;
         case JU_2:
