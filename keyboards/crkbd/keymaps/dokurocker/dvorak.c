@@ -13,9 +13,9 @@ void change_d2q_key(uint16_t d, uint16_t q, bool mods)
     d2q_map[d - DV_1][mods ? 1 : 0] = q;
 }
 
-bool input_dvorak(uint16_t keycode, bool pressed)
+bool input_dvorak(uint16_t* keycode, bool pressed)
 {
-    switch(keycode) {
+    switch(*keycode) {
         case KC_LCTL:
         case KC_RCTL:
         case KC_LALT:
@@ -29,16 +29,21 @@ bool input_dvorak(uint16_t keycode, bool pressed)
             break;
     }
  
-    if (keycode < DV_1 || DV_Z < keycode) {
+    if (*keycode < DV_1 || DV_Z < *keycode) {
         return true;
     }
     // shiftのみはdvorak配列
     bool mods = (keyboard_report->mods & ~(MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) != 0x0;
-
+    uint16_t key = d2q_map[*keycode - DV_1][mods ? 1 : 0];
+    if (key >= ORG_SAFE_RANGE) {
+        // カスタマイズしたキーが設定されていたら、キーコードを変更し、後続の処理に任せる
+        *keycode = key;
+        return true;
+    }
     if (pressed) {
-        register_code(d2q_map[keycode - DV_1][mods ? 1 : 0]);
+        register_code(key);
     } else {
-        unregister_code(d2q_map[keycode - DV_1][mods ? 1 : 0]);
+        unregister_code(key);
     }
     return true;
 }

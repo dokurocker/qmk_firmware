@@ -1,5 +1,5 @@
 /*
-JIS配列をUS配列にする
+DVORAK
 */
 
 #include "keymap.h"
@@ -21,4 +21,4 @@ process_record_user関数で利用
 @param pressed bool process_record_userのrecord->event.pressed
 @return process_record_userで戻すべき返り値
 */
-bool input_dvorak(uint16_t keycode, bool pressed);
+bool input_dvorak(uint16_t* keycode, bool pressed);

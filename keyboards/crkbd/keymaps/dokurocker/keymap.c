@@ -82,25 +82,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                       //`--------------------------'  `--------------------------'
   ),
 
-//   [_DVORAK] = LAYOUT_split_3x6_3(
-//   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-//        KC_TAB, JU_QUOT, KC_COMM,  KC_DOT,    KC_P,    KC_Y,                         KC_F,    KC_G,    KC_C,    KC_R,    KC_L, KC_SLSH,
-//   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-//       KC_LCTL,    KC_A,    KC_O,    KC_E,    KC_U,    KC_I,                         KC_D,    KC_H,    KC_T,    KC_N,    KC_S, JU_MINS,
-//   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-//       KC_LSFT, JU_SCLN,    KC_Q,    KC_J,    KC_K,    KC_X,                         KC_B,    KC_M,    KC_W,    KC_V,    KC_Z, KC_RSFT,
-//   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-//                                           KC_LGUI, KC_LOWR, KC_SPC,      KC_ENT, KC_RASE, KC_RALT
-//                                       //`--------------------------'  `--------------------------'
-
 //   ),
   [_DVORAK] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_TAB, DV_QUOT, DV_COMM,  DV_DOT,    DV_P,    DV_Y,                         DV_F,    DV_G,    DV_C,    DV_R,    DV_L, DV_SLSH,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL,    DV_A,    DV_O,    DV_E,    DV_U,    DV_I,                         DV_D,    DV_H,    DV_T,    DV_N,    DV_S, JU_MINS,
+      KC_LCTL,    DV_A,    DV_O,    DV_E,    DV_U,    DV_I,                         DV_D,    DV_H,    DV_T,    DV_N,    DV_S, DV_MINS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT, JU_SCLN,    DV_Q,    DV_J,    DV_K,    DV_X,                         DV_B,    DV_M,    DV_W,    DV_V,    DV_Z, KC_RSFT,
+      KC_LSFT, DV_SCLN,    DV_Q,    DV_J,    DV_K,    DV_X,                         DV_B,    DV_M,    DV_W,    DV_V,    DV_Z, KC_RSFT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI, KC_LOWR, KC_SPC,      KC_ENT, KC_RASE, KC_RALT
                                       //`--------------------------'  `--------------------------'
@@ -208,6 +197,12 @@ void oled_task_user(void) {
     }
 }
 
+void keyboard_post_init_user(void) {
+    change_d2q_key(DV_QUOT, JU_QUOT, false);
+    change_d2q_key(DV_MINS, JU_MINS, false);
+    change_d2q_key(DV_SCLN, JU_SCLN, false);
+}
+
 bool input_zenhankaku(uint16_t keycode, bool pressed) {
     // LOWER,RAISEキーを離したときに全角,半角にするかどうかのフラグ
     static bool want_hankaku = false;
@@ -279,11 +274,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (record->event.pressed) {
     set_keylog(keycode, record);
   }
-  uprintf("%d %d %d\n", keycode, JU_2, DV_1);
   ret = input_zenhankaku(keycode, record->event.pressed);
   ret = ret & change_layer(keycode, record->event.pressed);
-  //ret = ret & input_gui2alt(keycode, record->event.pressed);
-  ret = ret & input_dvorak(keycode, record->event.pressed);
+  ret = ret & input_gui2alt(keycode, record->event.pressed);
+  ret = ret & input_dvorak(&keycode, record->event.pressed);
   ret = ret & input_jis2us(keycode, record->event.pressed);
   return ret;
 }
