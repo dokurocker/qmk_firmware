@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 enum custom_keycodes {
     KC_LOWR = SAFE_RANGE,
     KC_RASE,
+    KC_QWERTY,
+    KC_DVORAK
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -72,7 +74,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_ADJUST] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-        RESET, XXXXXXX, XXXXXXX, XXXXXXX, DF(_DVORAK), DF(_QWERTY),                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        RESET, XXXXXXX, XXXXXXX,XXXXXXX,KC_DVORAK,KC_QWERTY,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -260,6 +262,28 @@ bool change_layer(uint16_t keycode, bool pressed) {
             } else {
                 layer_off(_RAISE);
             }
+            break;
+        case KC_QWERTY:
+            if (pressed) {
+                default_layer_set(1UL << _QWERTY);
+            }
+            break;
+        case KC_DVORAK:
+            if (pressed) {
+                if (default_layer_state & 1UL << _DVORAK) {
+                    toggle_dvorakjp();
+                } else {
+                    default_layer_set(1UL << _DVORAK);
+                    switch_dvorakjp(false);
+                }
+            }
+            // uprintf("%d,%d\n", layer_state_is(_DVORAK), layer_state_is(_QWERTY));
+            // if (layer_state_is(_DVORAK)) {
+            //     toggle_dvorakjp();
+            // } else {
+            //     default_layer_set(_DVORAK);
+            //     switch_dvorakjp(false);
+            // }
             break;
         default:
             return true;

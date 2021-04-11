@@ -5,7 +5,13 @@ DVORAK
 #include "keymap.h"
 
 /*
-process_record_user関数で利用
+dvorakjpモード
+*/
+void switch_dvorakjp(bool on);
+void toggle_dvorakjp(void);
+
+/*
+keyboard_post_init_user関数で利用
 変換後のキー変更
 
 @param keycode uint16_t keycode process_record_userの引数keycode
