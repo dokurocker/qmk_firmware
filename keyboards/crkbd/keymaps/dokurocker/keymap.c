@@ -99,9 +99,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
-#ifdef OLED_DRIVER_ENABLE
+#ifdef OLED_ENABLE
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-  if (!is_master) {
+  if (!is_keyboard_master()) {
     return OLED_ROTATION_180;  // flips the display 180 degrees if offhand
   }
   return rotation;
@@ -191,13 +191,14 @@ void oled_render_logo(void) {
 }
 
 void oled_task_user(void) {
-    if (is_master) {
+    if (is_keyboard_master()) {
         oled_render_layer_state();
         oled_render_keylog();
     } else {
         oled_render_logo();
     }
 }
+#endif // OLED_ENABLE
 
 void keyboard_post_init_user(void) {
     change_d2q_key(DV_QUOT, JU_QUOT, false);
@@ -295,9 +296,11 @@ bool change_layer(uint16_t keycode, bool pressed) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   bool ret = true;
+#ifdef OLED_ENABLE
   if (record->event.pressed) {
     set_keylog(keycode, record);
   }
+#endif // OLED_ENABLE
   ret = input_zenhankaku(keycode, record->event.pressed);
   ret = ret & change_layer(keycode, record->event.pressed);
   ret = ret & input_gui2alt(keycode, record->event.pressed);
@@ -305,4 +308,3 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   ret = ret & input_jis2us(keycode, record->event.pressed);
   return ret;
 }
-#endif // OLED_DRIVER_ENABLE
