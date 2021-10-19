@@ -5,6 +5,11 @@ JIS配列をUS配列にする
 #include "keymap.h"
 
 /*
+バックスラッシュを「￥」にする
+*/
+void toggle_bs2yen(void);
+
+/*
 process_record_user関数で利用
 
 @param keycode uint16_t keycode process_record_userの引数keycode

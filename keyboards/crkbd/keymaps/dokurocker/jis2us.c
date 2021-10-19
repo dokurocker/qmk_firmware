@@ -19,6 +19,13 @@ static void set_jis2us_key_info(jis2us_key_info *info, uint16_t a, bool a_s, uin
     info->shifted_key.needs_shift = b_s;
 }
 
+static bool disabled_backslash = false;
+
+void toggle_bs2yen(void)
+{
+    disabled_backslash = !disabled_backslash;
+}
+
 // shift + 長押しの挙動
 //   shiftを離す : shiftを押していない状態の長押しに変わる
 // 長押し後にshiftを押す
@@ -29,6 +36,9 @@ static void set_jis2us_key_info(jis2us_key_info *info, uint16_t a, bool a_s, uin
 
 static void register_jis2us(jis2us_key_info *info, bool pressed, uint8_t mods)
 {
+    static uint16_t registered_key = XXXXXXX;
+    static bool registered_key_needs_shift = false;
+
     if (pressed) {
         if (mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) {
             if (!info->shifted_key.needs_shift) {
@@ -41,31 +51,23 @@ static void register_jis2us(jis2us_key_info *info, bool pressed, uint8_t mods)
                 }
             }
             register_code(info->shifted_key.us_keycode);
+            registered_key = info->shifted_key.us_keycode;
+            registered_key_needs_shift = false;
         } else {
             if (info->key.needs_shift) {
                 register_code16(S(info->key.us_keycode));
             } else {
                 register_code(info->key.us_keycode);
             }
+            registered_key = info->key.us_keycode;
+            registered_key_needs_shift = info->key.needs_shift;
         }
         info->pressed = true;
     } else {
-        if (mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) {
-            unregister_code(info->shifted_key.us_keycode);
-            if (!info->shifted_key.needs_shift) {
-                if (mods & MOD_BIT(KC_LSFT)) {
-                    register_code(KC_LSFT);
-                }
-                if (mods & MOD_BIT(KC_RSFT)) {
-                    register_code(KC_RSFT);
-                }
-            }
+        if (registered_key_needs_shift) {
+            unregister_code16(S(registered_key));
         } else {
-            if (info->key.needs_shift) {
-                unregister_code16(S(info->key.us_keycode));
-            } else {
-                unregister_code(info->key.us_keycode);
-            }
+            unregister_code(registered_key);
         }
         info->pressed = false;
     }
@@ -100,25 +102,23 @@ bool input_jis2us(uint16_t keycode, bool pressed)
                 }
             } else {
                 mods &= ~MOD_BIT(keycode);
-                if (current_jis2us_key_info.pressed
-                    && mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))
-                    && ((keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) ^ ~MOD_BIT(keycode))
-                ) {
-                    // 現在JISキーをUSキーに変換中
-                    // シフトキーが離されて
-                    // その結果、シフトキーオフ状態になる
-                    if (current_jis2us_key_info.shifted_key.needs_shift) {
-                        unregister_code(keycode); // シフトキーを離した状態にする
-                    }
-                    unregister_code(current_jis2us_key_info.shifted_key.us_keycode);
-                    if (current_jis2us_key_info.key.needs_shift) {
-                        register_code16(S(current_jis2us_key_info.key.us_keycode));
-                    } else {
-                        register_code(current_jis2us_key_info.key.us_keycode);
-                    }
-                    current_jis2us_key_info.pressed = false;
-                    return false;
+                if (!current_jis2us_key_info.pressed) {
+                    // 変換対象が押されていない
+                    return true;
                 }
+                if (!mods) {
+                    // シフトを全て離した
+                    return true;
+                }
+                // 現在JISキーをUSキーに変換中
+                // シフトキーが離されて
+                // その結果、シフトキーオフ状態になる
+                if (current_jis2us_key_info.shifted_key.needs_shift) {
+                    unregister_code(keycode); // シフトキーを離した状態にする
+                }
+                unregister_code(current_jis2us_key_info.shifted_key.us_keycode);
+                current_jis2us_key_info.pressed = false;
+                return false;
             }
             return true;
         case JU_2:
@@ -162,7 +162,7 @@ bool input_jis2us(uint16_t keycode, bool pressed)
             register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_BSLS:
-            set_jis2us_key_info(&current_jis2us_key_info, KC_INT1, false, KC_INT3, true);
+            set_jis2us_key_info(&current_jis2us_key_info, disabled_backslash ? KC_INT3 : KC_INT1, false, KC_INT3, true);
             register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_SCLN:

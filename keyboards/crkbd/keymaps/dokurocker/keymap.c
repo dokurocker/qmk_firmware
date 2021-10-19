@@ -31,7 +31,8 @@ enum custom_keycodes {
     KC_LOWR = SAFE_RANGE,
     KC_RASE,
     KC_QWERTY,
-    KC_DVORAK
+    KC_DVORAK,
+    KC_BS_SWI,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -74,7 +75,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_ADJUST] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-        RESET, XXXXXXX, XXXXXXX,XXXXXXX,KC_DVORAK,KC_QWERTY,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        RESET, XXXXXXX, XXXXXXX,KC_BS_SWI,KC_DVORAK,KC_QWERTY,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -285,6 +286,11 @@ bool change_layer(uint16_t keycode, bool pressed) {
             //     default_layer_set(_DVORAK);
             //     switch_dvorakjp(false);
             // }
+            break;
+        case KC_BS_SWI:
+            if (pressed) {
+                toggle_bs2yen();
+            }
             break;
         default:
             return true;
