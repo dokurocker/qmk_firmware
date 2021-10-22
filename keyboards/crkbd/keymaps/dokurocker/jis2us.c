@@ -69,6 +69,15 @@ static void register_jis2us(jis2us_key_info *info, bool pressed, uint8_t mods)
         } else {
             unregister_code(registered_key);
         }
+        if (!info->shifted_key.needs_shift) {
+            // シフトキーをもとに戻す
+            if (mods & MOD_BIT(KC_LSFT)) {
+                register_code(KC_LSFT);
+            }
+            if (mods & MOD_BIT(KC_RSFT)) {
+                register_code(KC_RSFT);
+            }
+        }
         info->pressed = false;
     }
 }
