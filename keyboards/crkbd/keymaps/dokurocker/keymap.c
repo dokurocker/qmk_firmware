@@ -55,7 +55,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LCTL,   KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,                      KC_LEFT, KC_DOWN,   KC_UP,KC_RIGHT, KC_LBRC, KC_RBRC,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT,C(A(KC_DEL)), KC_F2, KC_F3,   KC_F4,   KC_F5,                       KC_F11,  KC_F12,   KC_F1, XXXXXXX, JU_BSLS, KC_RSFT,
+      KC_LSFT,C(A(KC_DEL)), KC_F2, KC_F3,   KC_F4,   KC_F5,                       KC_F11,  KC_F12,   KC_F1, XXXXXXX, KC_INT1, KC_RSFT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI, _______,  KC_SPC,     KC_DEL, _______, KC_RALT
                                       //`--------------------------'  `--------------------------'
@@ -312,6 +312,5 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   ret = ret & change_layer(keycode, record->event.pressed);
   ret = ret & input_gui2alt(keycode, record->event.pressed);
   ret = ret & input_dvorak(&keycode, record->event.pressed);
-  ret = ret & input_jis2us(keycode, record->event.pressed);
   return ret;
 }
