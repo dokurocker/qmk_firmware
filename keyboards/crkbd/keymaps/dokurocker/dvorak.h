@@ -7,6 +7,7 @@ DVORAK
 /*
 dvorakjpモード
 */
+bool is_dvorakjp(void);
 void switch_dvorakjp(bool on);
 void toggle_dvorakjp(void);
 

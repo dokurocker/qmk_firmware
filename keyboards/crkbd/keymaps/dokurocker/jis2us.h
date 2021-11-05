@@ -7,6 +7,7 @@ JIS配列をUS配列にする
 /*
 バックスラッシュを「￥」にする
 */
+bool is_bs2yen(void);
 void toggle_bs2yen(void);
 
 /*

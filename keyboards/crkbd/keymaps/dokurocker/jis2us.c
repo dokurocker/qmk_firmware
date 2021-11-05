@@ -21,6 +21,11 @@ static void set_jis2us_key_info(jis2us_key_info *info, uint16_t a, bool a_s, uin
 
 static bool disabled_backslash = false;
 
+bool is_bs2yen(void)
+{
+    return disabled_backslash;
+}
+
 void toggle_bs2yen(void)
 {
     disabled_backslash = !disabled_backslash;

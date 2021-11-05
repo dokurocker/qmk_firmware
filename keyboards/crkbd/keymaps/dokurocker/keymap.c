@@ -108,63 +108,35 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
   return rotation;
 }
 
-#define L_BASE 0
-#define L_DVORAK 2
-#define L_LOWER 4
-#define L_RAISE 8
-#define L_ADJUST 16
-
 void oled_render_layer_state(void) {
     oled_write_P(PSTR("Layer: "), false);
-    switch (layer_state) {
-        case L_BASE:
-            oled_write_ln_P(PSTR("Qwerty"), false);
-            break;
-        case L_DVORAK:
-            oled_write_ln_P(PSTR("Dvorak"), false);
-            break;
-        case L_LOWER:
+    switch (get_highest_layer(layer_state)) {
+        // case 1UL << _QWERTY:
+        //     oled_write_ln_P(PSTR("Qwerty"), false);
+        //     break;
+        // case 1UL << _DVORAK:
+        //     oled_write_ln_P(PSTR("Dvorak"), false);
+        //     break;
+        case _LOWER:
             oled_write_ln_P(PSTR("Lower"), false);
             break;
-        case L_RAISE:
+        case _RAISE:
             oled_write_ln_P(PSTR("Raise"), false);
             break;
-        case L_ADJUST:
-        case L_ADJUST|L_LOWER:
-        case L_ADJUST|L_RAISE:
-        case L_ADJUST|L_LOWER|L_RAISE:
+        case _ADJUST:
             oled_write_ln_P(PSTR("Adjust"), false);
             break;
+        default:
+            if (get_highest_layer(default_layer_state) == _QWERTY) {
+                oled_write_ln_P(PSTR("Qwerty"), false);
+            } else {
+                // dvorak
+                oled_write_ln_P(is_dvorakjp() ? PSTR("Dvorak_JP") : PSTR("Dvorak"), false);
+            }
+            break;
     }
-}
-
-
-char keylog_str[24] = {};
-
-const char code_to_name[60] = {
-    ' ', ' ', ' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f',
-    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-    'R', 'E', 'B', 'T', '_', '-', '=', '[', ']', '\\',
-    '#', ';', '\'', '`', ',', '.', '/', ' ', ' ', ' '};
-
-void set_keylog(uint16_t keycode, keyrecord_t *record) {
-  char name = ' ';
-    if ((keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) ||
-        (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX)) { keycode = keycode & 0xFF; }
-  if (keycode < 60) {
-    name = code_to_name[keycode];
-  }
-
-  // update keylog
-  snprintf(keylog_str, sizeof(keylog_str), "%dx%d, k%2d : %c",
-           record->event.key.row, record->event.key.col,
-           keycode, name);
-}
-
-void oled_render_keylog(void) {
-    oled_write(keylog_str, false);
+    // バックスラッシュが「￥」になっているかを表示
+    oled_write_ln_P(is_bs2yen() ? PSTR("Backslash 2 Yen") : PSTR(""), false);
 }
 
 void render_bootmagic_status(bool status) {
@@ -194,7 +166,6 @@ void oled_render_logo(void) {
 void oled_task_user(void) {
     if (is_keyboard_master()) {
         oled_render_layer_state();
-        oled_render_keylog();
     } else {
         oled_render_logo();
     }
@@ -279,13 +250,6 @@ bool change_layer(uint16_t keycode, bool pressed) {
                     switch_dvorakjp(false);
                 }
             }
-            // uprintf("%d,%d\n", layer_state_is(_DVORAK), layer_state_is(_QWERTY));
-            // if (layer_state_is(_DVORAK)) {
-            //     toggle_dvorakjp();
-            // } else {
-            //     default_layer_set(_DVORAK);
-            //     switch_dvorakjp(false);
-            // }
             break;
         case KC_BS_SWI:
             if (pressed) {
@@ -302,11 +266,6 @@ bool change_layer(uint16_t keycode, bool pressed) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   bool ret = true;
-#ifdef OLED_ENABLE
-  if (record->event.pressed) {
-    set_keylog(keycode, record);
-  }
-#endif // OLED_ENABLE
   ret = input_zenhankaku(keycode, record->event.pressed);
   ret = ret & change_layer(keycode, record->event.pressed);
   ret = ret & input_gui2alt(keycode, record->event.pressed);

@@ -62,6 +62,11 @@ roma roma_list[] = {
 
 static bool enabled_dvorakjp = false;
 
+bool is_dvorakjp(void)
+{
+    return enabled_dvorakjp;
+}
+
 void switch_dvorakjp(bool on)
 {
     enabled_dvorakjp = on;
