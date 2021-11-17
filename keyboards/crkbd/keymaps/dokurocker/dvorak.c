@@ -24,43 +24,48 @@ struct _roma {
 typedef struct _roma roma;
 
 roma roma_list[] = {
-    {DV_Y, 'y', 'y', 1, 2}, {DV_Y, 'y', 'y', 40, 40},
+    {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 1, 2}, {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 40, 40},
     // n を y にする
-    {DV_F, 'f', 'f', 1, 2}, {DV_F, 'f', 'f', 36, 36},
-    {DV_G, 'g', 'g', 1, 2}, {DV_G, 'g', 'g', 34, 34},
-    {DV_C, 'c', 'k', 1, 2}, {DV_C, 'c', 'k', 32, 32},
-    {DV_D, 'd', 'd', 1, 2}, {DV_D, 'd', 'd', 30, 30},
-    {DV_H, 'h', 'h', 1, 2}, {DV_H, 'h', 'h', 28, 28},
-    {DV_T, 't', 't', 1, 2}, {DV_T, 't', 't', 26, 26},
-    {DV_B, 'b', 'b', 1, 2}, {DV_B, 'b', 'b', 24, 24},
-    {DV_M, 'm', 'm', 1, 2}, {DV_M, 'm', 'm', 22, 22},
+    {DV_F, X2HEX(X_F), X2HEX(X_F), 1, 2}, {DV_F, X2HEX(X_F), X2HEX(X_F), 36, 36},
+    {DV_G, X2HEX(X_G), X2HEX(X_G), 1, 2}, {DV_G, X2HEX(X_G), X2HEX(X_G), 34, 34},
+    {DV_C, X2HEX(X_C), X2HEX(X_K), 1, 2}, {DV_C, X2HEX(X_C), X2HEX(X_K), 32, 32},
+    {DV_D, X2HEX(X_D), X2HEX(X_D), 1, 2}, {DV_D, X2HEX(X_D), X2HEX(X_D), 30, 30},
+    {DV_H, X2HEX(X_H), X2HEX(X_H), 1, 2}, {DV_H, X2HEX(X_H), X2HEX(X_H), 28, 28},
+    {DV_T, X2HEX(X_T), X2HEX(X_T), 1, 2}, {DV_T, X2HEX(X_T), X2HEX(X_T), 26, 26},
+    {DV_B, X2HEX(X_B), X2HEX(X_B), 1, 2}, {DV_B, X2HEX(X_B), X2HEX(X_B), 24, 24},
+    {DV_M, X2HEX(X_M), X2HEX(X_M), 1, 2}, {DV_M, X2HEX(X_M), X2HEX(X_M), 22, 22},
     // h を y にする
-    {DV_P, 'p', 'p', 1, 2}, {DV_P, 'p', 'p', 21, 21},
-    {DV_R, 'r', 'r', 1, 2}, {DV_R, 'r', 'r', 19, 19},
-    {DV_L, 'l', 'l', 1, 2}, {DV_L, 'l', 'l', 17, 17},
-    {DV_N, 'n', 'n', 16, 1},
-    {DV_S, 's', 's', 1, 2}, {DV_S, 's', 's', 14, 14},
-    {DV_Q, 'q', 'q', 1, 2}, {DV_Q, 'q', 'q', 12, 12},
-    {DV_J, 'j', 'j', 1, 2}, {DV_J, 'j', 'j', 10, 10},
-    {DV_X, 'x', 'x', 1, 2}, {DV_X, 'x', 'x', 8, 8},
-    {DV_W, 'w', 'w', 1, 2}, {DV_W, 'w', 'w', 6, 6},
-    {DV_V, 'v', 'v', 1, 2}, {DV_V, 'v', 'v', 4, 4},
-    {DV_Z, 'z', 'z', 1, 0}, {DV_Z, 'z', 'z', 2, 2},
-    {DV_N, 'n', 'y', 2, 2},
-    {DV_H, 'h', 'y', 1, 1},
-    {DV_A, 'a', 'a', 0, 1}, {DV_I, 'i', 'i', 0, 1}, {DV_U, 'u', 'u', 0, 1}, {DV_E, 'e', 'e', 0, 1}, {DV_O, 'o', 'o', 0, 1},
+    {DV_P, X2HEX(X_P), X2HEX(X_P), 1, 2}, {DV_P, X2HEX(X_P), X2HEX(X_P), 21, 21},
+    {DV_R, X2HEX(X_R), X2HEX(X_R), 1, 2}, {DV_R, X2HEX(X_R), X2HEX(X_R), 19, 19},
+    {DV_L, X2HEX(X_L), X2HEX(X_L), 1, 2}, {DV_L, X2HEX(X_L), X2HEX(X_L), 17, 17},
+    {DV_N, X2HEX(X_N), X2HEX(X_N), 16, 1},
+    {DV_S, X2HEX(X_S), X2HEX(X_S), 1, 2}, {DV_S, X2HEX(X_S), X2HEX(X_S), 14, 14},
+    {DV_Q, X2HEX(X_Q), X2HEX(X_Q), 1, 2}, {DV_Q, X2HEX(X_Q), X2HEX(X_Q), 12, 12},
+    {DV_J, X2HEX(X_J), X2HEX(X_J), 1, 2}, {DV_J, X2HEX(X_J), X2HEX(X_J), 10, 10},
+    {DV_X, X2HEX(X_X), X2HEX(X_X), 1, 2}, {DV_X, X2HEX(X_X), X2HEX(X_X), 8, 8},
+    {DV_W, X2HEX(X_W), X2HEX(X_W), 1, 2}, {DV_W, X2HEX(X_W), X2HEX(X_W), 6, 6},
+    {DV_V, X2HEX(X_V), X2HEX(X_V), 1, 2}, {DV_V, X2HEX(X_V), X2HEX(X_V), 4, 4},
+    {DV_Z, X2HEX(X_Z), X2HEX(X_Z), 1, 0}, {DV_Z, X2HEX(X_Z), X2HEX(X_Z), 2, 2},
+    {DV_N, X2HEX(X_N), X2HEX(X_Y), 2, 2},
+    {DV_H, X2HEX(X_H), X2HEX(X_Y), 1, 1},
+    {DV_A, X2HEX(X_A), X2HEX(X_A), 0, 1}, {DV_I, X2HEX(X_I), X2HEX(X_I), 0, 1}, {DV_U, X2HEX(X_U), X2HEX(X_U), 0, 1}, {DV_E, X2HEX(X_E), X2HEX(X_E), 0, 1}, {DV_O, X2HEX(X_O), X2HEX(X_O), 0, 1},
     // 二重母音拡張と撥音拡張
-    {DV_QUOT, 'i', 'a', 0xff, 1},
-    {DV_COMM, 'u', 'o', 0xff, 1},
-    {DV_DOT, 'i', 'e', 0xff, 1},
-    {DV_SCLN, 'n', 'a', 0xff, 1},
-    {DV_Q, 'n', 'o', 0xff, 1}, 
-    {DV_J, 'n', 'e', 0xff, 1},
-    {DV_K, 'n', 'u', 0xff, 1},
-    {DV_X, 'n', 'i', 0xff, 0}
+    {DV_QUOT, X2HEX(X_I), X2HEX(X_A), 0xff, 1},
+    {DV_COMM, X2HEX(X_U), X2HEX(X_O), 0xff, 1},
+    {DV_DOT, X2HEX(X_I), X2HEX(X_E), 0xff, 1},
+    {DV_SCLN, X2HEX(X_N), X2HEX(X_A), 0xff, 1},
+    {DV_Q, X2HEX(X_N), X2HEX(X_O), 0xff, 1}, 
+    {DV_J, X2HEX(X_N), X2HEX(X_E), 0xff, 1},
+    {DV_K, X2HEX(X_N), X2HEX(X_U), 0xff, 1},
+    {DV_X, X2HEX(X_N), X2HEX(X_I), 0xff, 0}
 };
 
 static bool enabled_dvorakjp = false;
+const static uint8_t SS_DELAY_MAX = 255;
+const static uint8_t SS_DELAY_MIN = 0;
+const static uint8_t SS_DELAY_ADD = 5;
+
+static uint8_t ss_delay = 0; // send_stringのdelay値
 
 bool is_dvorakjp(void)
 {
@@ -75,6 +80,39 @@ void switch_dvorakjp(bool on)
 void toggle_dvorakjp(void)
 {
     enabled_dvorakjp = !enabled_dvorakjp;
+}
+
+uint8_t lengthen_ss_delay(void)
+{
+    if (ss_delay <= SS_DELAY_MAX - SS_DELAY_ADD) {
+        ss_delay += SS_DELAY_ADD;
+    }
+    uprintf("l %d\n", ss_delay);
+    return ss_delay;
+}
+
+uint8_t shorten_ss_delay(void)
+{
+    if (ss_delay >= SS_DELAY_MIN + SS_DELAY_ADD) {
+        ss_delay -= SS_DELAY_ADD;
+    }
+    uprintf("s %d\n", ss_delay);
+    return ss_delay;
+}
+
+void send_string_with_tapping_term(const char *str, uint8_t tapping_term)
+{
+    char ss[13] = "";
+    char c = *str;
+    while (c) {
+        if (tapping_term > 0) {
+           sprintf(ss, "\1\2%c\1\4%d|\1\3%c", c, TAPPING_TERM + tapping_term, c);
+        } else {
+           sprintf(ss, "\1\1%c", c);
+        }
+        send_string(ss);
+        c = *(++str);
+    }
 }
 
 bool dvorakjp(uint16_t keycode)
@@ -98,12 +136,12 @@ bool dvorakjp(uint16_t keycode)
             if (current->hit == 0xff) {
                 // 二重母音拡張と撥音拡張
                 djp_stack[djp_count++] = current->raw;
-                if (current->raw == 'n') {
+                if (current->raw == X2HEX(X_N)) {
                     djp_stack[djp_count++] = current->raw;
                 }
                 djp_stack[djp_count] = '\0';
             }
-            send_string(djp_stack);
+            send_string_with_tapping_term(djp_stack, ss_delay);
             raw_count = 0;
             djp_count = 0;
             raw_stack[raw_count] = '\0';
@@ -120,7 +158,7 @@ bool dvorakjp(uint16_t keycode)
     djp_count = 0;
     djp_stack[djp_count] = '\0';
     if (raw_count > 0) {
-        send_string(raw_stack);
+        send_string_with_tapping_term(raw_stack, ss_delay);
         raw_count = 0;
         raw_stack[raw_count] = '\0';
     }

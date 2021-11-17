@@ -81,7 +81,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_RALT
+                                          KC_LSFT, _______,  KC_SPC,     KC_ENT, _______, KC_RSFT
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -264,10 +264,33 @@ bool change_layer(uint16_t keycode, bool pressed) {
     return false;
 }
 
+// DvorakJP時のsend_stringのdelay値変更
+bool adjust_dvorakjp_delay(uint16_t keycode, bool pressed)
+{
+    uint8_t mods = get_mods();
+    if (!pressed || keycode != KC_DVORAK) {
+        return true;
+    }
+
+    if ((mods & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT)) {
+        shorten_ss_delay();
+    } else if ((mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
+        lengthen_ss_delay();
+    } else {
+        return true;
+    }
+    return false;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   bool ret = true;
-  ret = input_zenhankaku(keycode, record->event.pressed);
-  ret = ret & change_layer(keycode, record->event.pressed);
+  input_zenhankaku(keycode, record->event.pressed);
+  ret = adjust_dvorakjp_delay(keycode, record->event.pressed);
+  ret = ret && change_layer(keycode, record->event.pressed);
+  if (!ret) {
+      return false;
+  }
+  // TODO: ビット演算になってる
   ret = ret & input_gui2alt(keycode, record->event.pressed);
   ret = ret & input_dvorak(&keycode, record->event.pressed);
   ret = ret & input_jis2us(keycode, record->event.pressed);
