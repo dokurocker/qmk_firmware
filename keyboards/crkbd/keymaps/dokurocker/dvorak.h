@@ -5,19 +5,13 @@ DVORAK
 #include "keymap.h"
 
 /*
-dvorakjp用マクロ
-*/
-#define X2HEX(x) _X2HEX(x)
-#define _X2HEX(y) 0x##y
-
-/*
 dvorakjpモード
 */
 bool is_dvorakjp(void);
 void switch_dvorakjp(bool on);
 void toggle_dvorakjp(void);
-uint8_t lengthen_ss_delay(void);
-uint8_t shorten_ss_delay(void);
+uint8_t lengthen_tapping_term(void);
+uint8_t shorten_tapping_term(void);
 
 /*
 keyboard_post_init_user関数で利用

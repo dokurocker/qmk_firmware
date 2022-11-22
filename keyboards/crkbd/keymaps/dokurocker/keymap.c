@@ -274,9 +274,9 @@ bool adjust_dvorakjp_delay(uint16_t keycode, bool pressed)
     }
 
     if ((mods & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT)) {
-        shorten_ss_delay();
+        shorten_tapping_term();
     } else if ((mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
-        lengthen_ss_delay();
+        lengthen_tapping_term();
     } else {
         return true;
     }
@@ -291,9 +291,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (!ret) {
       return false;
   }
+  ret = ret && input_gui2alt(keycode, record->event.pressed);
+  ret = ret && input_dvorak(&keycode, record->event.pressed);
   // TODO: ビット演算になってる
-  ret = ret & input_gui2alt(keycode, record->event.pressed);
-  ret = ret & input_dvorak(&keycode, record->event.pressed);
   ret = ret & input_jis2us(keycode, record->event.pressed);
   return ret;
 }

@@ -8,4 +8,5 @@ EXTRAFLAGS += -flto
 
 SRC += jis2us.c \
     gui2alt.c \
+    dvorakjp/dvorakjp.c \
     dvorak.c
