@@ -6,7 +6,7 @@ include $(QUANTUM_PATH)/encoder/tests/testlist.mk
 include $(QUANTUM_PATH)/sequencer/tests/testlist.mk
 include $(QUANTUM_PATH)/wear_leveling/tests/testlist.mk
 include $(PLATFORM_PATH)/test/testlist.mk
-include keyboards/crkbd/keymaps/dokurocker/test/testlist.mk
+include keyboards/crkbd/keymaps/dokurocker/dvorakjp/tests/testlist.mk
 
 define VALIDATE_TEST_LIST
     ifneq ($1,)

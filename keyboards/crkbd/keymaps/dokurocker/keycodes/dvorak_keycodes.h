@@ -1,3 +1,4 @@
+#pragma once
 /*
 DVORAK
 ただしShift以外のModifyキーは他のキーを指定可能

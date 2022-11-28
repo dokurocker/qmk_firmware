@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 JIS配列をUS配列にする
 */
