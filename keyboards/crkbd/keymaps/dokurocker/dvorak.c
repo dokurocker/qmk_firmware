@@ -73,18 +73,21 @@ bool input_dvorak(uint16_t* keycode, bool pressed)
     if (*keycode < DV_1 || DV_Z < *keycode) {
         return true;
     }
-    if (enabled_dvorakjp && pressed && dvorakjp(*keycode, tapping_term)) {
-        return false;
-    }
     // shiftのみはdvorak配列
     bool mods = (keyboard_report->mods & ~(MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) != 0x0;
     uint16_t key = d2q_map[*keycode - DV_1][mods ? 1 : 0];
     static uint16_t pressed_custum_key = XXXXXXX;
+
+    if (enabled_dvorakjp && !mods && pressed && dvorakjp(*keycode, tapping_term)) {
+        return false;
+    }
+
     if (pressed) {
         pressed_custum_key = key;
     } else if (pressed_custum_key != XXXXXXX && pressed_custum_key != key) {
         // 先にmodsキーを離している
-        key = pressed_custum_key;
+        unregister_code(pressed_custum_key);
+        pressed_custum_key = XXXXXXX;
     }
     if (key >= ORG_SAFE_RANGE) {
         // カスタマイズしたキーが設定されていたら、キーコードを変更し、後続の処理に任せる
