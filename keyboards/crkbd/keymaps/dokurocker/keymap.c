@@ -265,8 +265,8 @@ bool change_layer(uint16_t keycode, bool pressed) {
     return false;
 }
 
-// DvorakJP時のsend_stringのdelay値変更
-bool adjust_dvorakjp_delay(uint16_t keycode, bool pressed)
+// DvorakJP時のsend_stringのdelay値、stack配列タイムアウト値変更
+bool adjust_dvorakjp_variables(uint16_t keycode, bool pressed)
 {
     uint8_t mods = get_mods();
     if (!pressed || keycode != KC_DVORAK) {
@@ -277,16 +277,26 @@ bool adjust_dvorakjp_delay(uint16_t keycode, bool pressed)
         shorten_tapping_term();
     } else if ((mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
         lengthen_tapping_term();
+    } else if ((mods & MOD_BIT(KC_LCTL)) == MOD_BIT(KC_LCTL)) {
+        shorten_dvorakjp_timeout();
+    } else if ((mods & MOD_BIT(KC_RCTL)) == MOD_BIT(KC_RCTL)) {
+        lengthen_dvorakjp_timeout();
     } else {
         return true;
     }
     return false;
 }
 
+void matrix_scan_user(void) {
+  if (is_dvorakjp()) {
+    reset_dvorakjp(false);
+  }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   bool ret = true;
   input_zenhankaku(keycode, record->event.pressed);
-  ret = adjust_dvorakjp_delay(keycode, record->event.pressed);
+  ret = adjust_dvorakjp_variables(keycode, record->event.pressed);
   ret = ret && change_layer(keycode, record->event.pressed);
   if (!ret) {
       return false;

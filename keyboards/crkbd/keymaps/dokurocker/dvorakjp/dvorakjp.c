@@ -1,6 +1,6 @@
 #include "dvorakjp.h"
 
-roma roma_list[] = {
+static roma roma_list[] = {
     {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 1, 2}, {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 49, 49},
     // 単一のN（ん）の後の子音（UNNCO -> UNCOと打てるように）
     {DV_N, X2HEX(X_N), X2HEX(X_N), 1, 14},
@@ -48,6 +48,12 @@ roma roma_list[] = {
     {DV_X, X2HEX(X_N), X2HEX(X_I), 0xff, 0}
 };
 
+static roma* current = roma_list;
+static char raw_stack[6] = {'\0', '\0', '\0', '\0', '\0', '\0'};
+static unsigned char raw_count = 0;
+static char djp_stack[8] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};
+static unsigned char djp_count = 0;
+
 void send_string_with_tapping_term(const char *str, uint8_t tapping_term)
 {
     char ss[13] = "";
@@ -63,14 +69,17 @@ void send_string_with_tapping_term(const char *str, uint8_t tapping_term)
     }
 }
 
+void reset_dvorakjp_variables(void)
+{
+    current = roma_list;
+    raw_count = 0;
+    djp_count = 0;
+    raw_stack[raw_count] = '\0';
+    djp_stack[djp_count] = '\0';
+}
+
 bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
 {
-    static roma* current = roma_list;
-    static char raw_stack[6] = {'\0', '\0', '\0', '\0', '\0', '\0'};
-    static unsigned char raw_count = 0;
-    static char djp_stack[8] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};
-    static unsigned char djp_count = 0;
-    
     while (1) {
         if (current->keycode == keycode) {
             raw_stack[raw_count++] = current->raw;
@@ -90,11 +99,7 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
                 djp_stack[djp_count] = '\0';
             }
             send_string_with_tapping_term(djp_stack, tapping_term);
-            raw_count = 0;
-            djp_count = 0;
-            raw_stack[raw_count] = '\0';
-            djp_stack[djp_count] = '\0';
-            current = roma_list;
+            reset_dvorakjp_variables();
             return true;
         }
         if (current->miss == 0) {
@@ -102,13 +107,9 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
         }
         current = current + current->miss;
     }
-    current = roma_list;
-    djp_count = 0;
-    djp_stack[djp_count] = '\0';
     if (raw_count > 0) {
         send_string_with_tapping_term(raw_stack, tapping_term);
-        raw_count = 0;
-        raw_stack[raw_count] = '\0';
     }
+    reset_dvorakjp_variables();
     return false;
 }

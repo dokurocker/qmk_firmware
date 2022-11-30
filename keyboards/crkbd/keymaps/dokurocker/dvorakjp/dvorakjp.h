@@ -29,4 +29,5 @@ struct _roma {
 
 typedef struct _roma roma; 
 
+void reset_dvorakjp_variables(void);
 bool dvorakjp(uint16_t keycode, uint8_t tapping_term);

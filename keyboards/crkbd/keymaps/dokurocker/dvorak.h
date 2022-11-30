@@ -12,6 +12,9 @@ void switch_dvorakjp(bool on);
 void toggle_dvorakjp(void);
 uint8_t lengthen_tapping_term(void);
 uint8_t shorten_tapping_term(void);
+uint16_t lengthen_dvorakjp_timeout(void);
+uint16_t shorten_dvorakjp_timeout(void);
+void reset_dvorakjp(bool is_force);
 
 /*
 keyboard_post_init_user関数で利用

@@ -15,11 +15,17 @@ void change_d2q_key(uint16_t d, uint16_t q, bool mods)
 }
 
 static bool enabled_dvorakjp = false;
+
 const static uint8_t TT_MAX = 255;
 const static uint8_t TT_MIN = 0;
 const static uint8_t TT_ADD = 5;
-
 static uint8_t tapping_term = 0; // send_stringのdelay値
+
+const static uint16_t DIT_MAX = 2000;
+const static uint8_t DIT_MIN = 100;
+const static uint8_t DIT_ADD = 100;
+static uint16_t dvorakjp_timeout = 1000;
+static uint16_t dvorakjp_idle_time = 0;
 
 bool is_dvorakjp(void)
 {
@@ -29,11 +35,17 @@ bool is_dvorakjp(void)
 void switch_dvorakjp(bool on)
 {
     enabled_dvorakjp = on;
+    if (on) {
+        reset_dvorakjp(true);
+    }
 }
 
 void toggle_dvorakjp(void)
 {
     enabled_dvorakjp = !enabled_dvorakjp;
+    if (enabled_dvorakjp) {
+        reset_dvorakjp(true);
+    }
 }
 
 uint8_t lengthen_tapping_term(void)
@@ -54,17 +66,41 @@ uint8_t shorten_tapping_term(void)
     return tapping_term;
 }
 
+uint16_t lengthen_dvorakjp_timeout(void)
+{
+    if (dvorakjp_timeout <= DIT_MAX - DIT_ADD) {
+        dvorakjp_timeout += DIT_ADD;
+    }
+    uprintf("l %d\n", dvorakjp_timeout);
+    return dvorakjp_timeout;
+}
+
+uint16_t shorten_dvorakjp_timeout(void)
+{
+    if (dvorakjp_timeout >= DIT_MIN + DIT_ADD) {
+        dvorakjp_timeout -= DIT_ADD;
+    }
+    uprintf("s %d\n", dvorakjp_timeout);
+    return dvorakjp_timeout;
+}
+
+void reset_dvorakjp(bool is_force) {
+    if (is_force || dvorakjp_idle_time < dvorakjp_timeout) {
+        // TODO: しきい値を変数にする
+        reset_dvorakjp_variables();
+        dvorakjp_idle_time = 0;
+    }
+}
+
 bool input_dvorak(uint16_t* keycode, bool pressed)
 {
     switch(*keycode) {
-        case KC_LCTL:
-        case KC_RCTL:
-        case KC_LALT:
-        case KC_RALT:
-        case KC_LGUI:
-        case KC_RGUI:
-            // TODO: DVキーリセット
-            // break;
+        case KC_DEL:
+        case KC_BSPC:
+            // dvorakjpリセット
+            if (enabled_dvorakjp) {
+                reset_dvorakjp(true);
+            }
             return true;
         default:
             break;
@@ -78,8 +114,11 @@ bool input_dvorak(uint16_t* keycode, bool pressed)
     uint16_t key = d2q_map[*keycode - DV_1][mods ? 1 : 0];
     static uint16_t pressed_custum_key = XXXXXXX;
 
-    if (enabled_dvorakjp && !mods && pressed && dvorakjp(*keycode, tapping_term)) {
-        return false;
+    if (enabled_dvorakjp && !mods && pressed) {
+        dvorakjp_idle_time = timer_read();
+        if (dvorakjp(*keycode, tapping_term)) {
+            return false;
+        }
     }
 
     if (pressed) {
