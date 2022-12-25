@@ -1,9 +1,11 @@
 #include "dvorakjp.h"
 
 static roma roma_list[] = {
-    {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 1, 2}, {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 49, 49},
+    {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 1, 2}, {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 50, 50},
     // 単一のN（ん）の後の子音（UNNCO -> UNCOと打てるように）
-    {DV_N, X2HEX(X_N), X2HEX(X_N), 1, 14},
+    {DV_N, X2HEX(X_N), X2HEX(X_N), 1, 15},
+    // h を y にする
+    {DV_H, X2HEX(X_H), X2HEX(X_Y), 52, 1},
     {DV_A, X2HEX(X_A), X2HEX(X_A), 0, 1}, {DV_I, X2HEX(X_I), X2HEX(X_I), 0, 1}, {DV_U, X2HEX(X_U), X2HEX(X_U), 0, 1}, {DV_E, X2HEX(X_E), X2HEX(X_E), 0, 1}, {DV_O, X2HEX(X_O), X2HEX(X_O), 0, 1},
     // 二重母音拡張と撥音拡張
     {DV_QUOT, X2HEX(X_I), X2HEX(X_A), 0xff, 1},
@@ -15,12 +17,13 @@ static roma roma_list[] = {
     {DV_K, X2HEX(X_N), X2HEX(X_U), 0xff, 1},
     {DV_X, X2HEX(X_N), X2HEX(X_I), 0xff, 1},
     // n を y にする
-    {DV_F, X2HEX(X_F), X2HEX(X_F), 1, 2}, {DV_F, X2HEX(X_F), X2HEX(X_F), 35, 35},
-    {DV_G, X2HEX(X_G), X2HEX(X_G), 1, 2}, {DV_G, X2HEX(X_G), X2HEX(X_G), 33, 33},
-    {DV_C, X2HEX(X_C), X2HEX(X_K), 1, 2}, {DV_C, X2HEX(X_C), X2HEX(X_K), 31, 31},
-    {DV_D, X2HEX(X_D), X2HEX(X_D), 1, 2}, {DV_D, X2HEX(X_D), X2HEX(X_D), 29, 29},
-    {DV_H, X2HEX(X_H), X2HEX(X_H), 1, 2}, {DV_H, X2HEX(X_H), X2HEX(X_H), 27, 27},
-    {DV_T, X2HEX(X_T), X2HEX(X_T), 1, 2}, {DV_T, X2HEX(X_T), X2HEX(X_T), 25, 25},
+    {DV_F, X2HEX(X_F), X2HEX(X_F), 1, 2}, {DV_F, X2HEX(X_F), X2HEX(X_F), 36, 36},
+    {DV_G, X2HEX(X_G), X2HEX(X_G), 1, 2}, {DV_G, X2HEX(X_G), X2HEX(X_G), 34, 34},
+    {DV_C, X2HEX(X_C), X2HEX(X_K), 1, 2}, {DV_C, X2HEX(X_C), X2HEX(X_K), 32, 32},
+    {DV_D, X2HEX(X_D), X2HEX(X_D), 1, 2}, {DV_D, X2HEX(X_D), X2HEX(X_D), 3, 30},
+    {DV_T, X2HEX(X_T), X2HEX(X_T), 1, 2}, {DV_T, X2HEX(X_T), X2HEX(X_T), 1, 28},
+    {DV_H, X2HEX(X_H), X2HEX(X_H), 1, 28},
+    {DV_H, X2HEX(X_H), X2HEX(X_H), 1, 2}, {DV_H, X2HEX(X_H), X2HEX(X_H), 25, 25},
     {DV_B, X2HEX(X_B), X2HEX(X_B), 1, 2}, {DV_B, X2HEX(X_B), X2HEX(X_B), 23, 23},
     {DV_M, X2HEX(X_M), X2HEX(X_M), 1, 2}, {DV_M, X2HEX(X_M), X2HEX(X_M), 21, 21},
     // h を y にする

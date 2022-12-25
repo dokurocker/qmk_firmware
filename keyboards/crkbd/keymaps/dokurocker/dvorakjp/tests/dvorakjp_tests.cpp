@@ -93,3 +93,31 @@ TEST(DvorakjpTest, DaisougenTest) {
     DvorakjpTest::Input(keycodes);
     ASSERT_STREQ("daisougenn", send_string_output);
 }
+
+TEST(DvorakjpTest, HonyuuruiTest) {
+    uint16_t keycodes[] = {DV_H, DV_O, DV_N, DV_H, DV_U, DV_U, DV_R, DV_U, DV_I, INPUT_END};
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input(keycodes);
+    ASSERT_STREQ("honyuurui", send_string_output);
+}
+
+TEST(DvorakjpTest, ThinThinTest) {
+    uint16_t keycodes[] = {DV_T, DV_H, DV_X, DV_T, DV_H, DV_X, INPUT_END};
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input(keycodes);
+    ASSERT_STREQ("thinnthinn", send_string_output);
+}
+
+TEST(DvorakjpTest, DhinDhinTest) {
+    uint16_t keycodes[] = {DV_D, DV_H, DV_X, DV_D, DV_H, DV_X, INPUT_END};
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input(keycodes);
+    ASSERT_STREQ("dhinndhinn", send_string_output);
+}
+
+TEST(DvorakjpTest, YannYannTest) {
+    uint16_t keycodes[] = {DV_Y, DV_SCLN, DV_Y, DV_SCLN, INPUT_END};
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input(keycodes);
+    ASSERT_STREQ("yannyann", send_string_output);
+}
