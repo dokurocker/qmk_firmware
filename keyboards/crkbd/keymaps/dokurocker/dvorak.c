@@ -26,6 +26,7 @@ const static uint8_t DIT_MIN = 100;
 const static uint8_t DIT_ADD = 100;
 static uint16_t dvorakjp_timeout = 1000;
 static uint16_t dvorakjp_idle_time = 0;
+static bool dvorakjp_idle = false;
 
 bool is_dvorakjp(void)
 {
@@ -84,11 +85,11 @@ uint16_t shorten_dvorakjp_timeout(void)
     return dvorakjp_timeout;
 }
 
-void reset_dvorakjp(bool is_force) {
-    if (is_force || dvorakjp_idle_time < dvorakjp_timeout) {
-        // TODO: しきい値を変数にする
+void reset_dvorakjp(bool is_force)
+{
+    if (is_force || (dvorakjp_idle && timer_elapsed(dvorakjp_idle_time) >= dvorakjp_timeout)) {
         reset_dvorakjp_variables();
-        dvorakjp_idle_time = 0;
+        dvorakjp_idle = false;
     }
 }
 
@@ -116,6 +117,7 @@ bool input_dvorak(uint16_t* keycode, bool pressed)
 
     if (enabled_dvorakjp && !mods && pressed) {
         dvorakjp_idle_time = timer_read();
+        dvorakjp_idle = true;
         if (dvorakjp(*keycode, tapping_term)) {
             return false;
         }
