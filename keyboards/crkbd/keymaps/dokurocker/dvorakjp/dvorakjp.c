@@ -1,5 +1,5 @@
 #include "dvorakjp.h"
-
+//wh k *y kw qw gw xca xka xke sw zw ts tw dw xtu hw xwa
 static roma roma_list[] = {
     {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 1, 2}, {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 50, 50},
     // 単一のN（ん）の後の子音（UNNCO -> UNCOと打てるように）
@@ -85,13 +85,15 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
 {
     while (1) {
         if (current->keycode == keycode) {
-            raw_stack[raw_count++] = current->raw;
-            raw_stack[raw_count] = '\0';
-            djp_stack[djp_count++] = current->dvorakjp;
-            djp_stack[djp_count] = '\0';
+            if (raw_count > 0 || current->raw != current->dvorakjp) {
+                raw_stack[raw_count++] = current->raw;
+                raw_stack[raw_count] = '\0';
+                djp_stack[djp_count++] = current->dvorakjp;
+                djp_stack[djp_count] = '\0';
+            }
             if (current->hit > 0 && current->hit != 0xff) {
                 current = current + current->hit;
-                return true;
+                return raw_count > 0;
             }
             if (current->hit == 0xff) {
                 // 二重母音拡張と撥音拡張
@@ -101,9 +103,13 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
                 }
                 djp_stack[djp_count] = '\0';
             }
-            send_string_with_tapping_term(djp_stack, tapping_term);
+            if (djp_count > 0) {
+                send_string_with_tapping_term(djp_stack, tapping_term);
+                reset_dvorakjp_variables();
+                return true;
+            }
             reset_dvorakjp_variables();
-            return true;
+            return false;
         }
         if (current->miss == 0) {
             break;
@@ -114,5 +120,5 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
         send_string_with_tapping_term(raw_stack, tapping_term);
     }
     reset_dvorakjp_variables();
-    return false;
+    return raw_count > 0;
 }
