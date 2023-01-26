@@ -1,9 +1,11 @@
 #include "dvorakjp.h"
 
 static roma roma_list[] = {
-    {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 1, 2}, {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 51, 51},
+    {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 1, 2}, {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 53, 53},
     // f は y に変更
-    {DV_F, X2HEX(X_F), X2HEX(X_Y), 1, 2}, {DV_F, X2HEX(X_F), X2HEX(X_Y), 48-4, 48-4},
+    {DV_F, X2HEX_EX5(X_F), X2HEX(X_Y), 1, 4}, {DV_F, X2HEX_EX5(X_F), X2HEX(X_Y), 1, 1},
+    // f,ff の次が y,n だったら fy,ffy にする(フャ行)
+    {DV_Y, X2HEX_EX4(X_Y), X2HEX(X_Y), 49, 1}, {DV_N, X2HEX_EX4(X_N), X2HEX(X_Y), 48, 48-4},
     // 単一のN（ん）の後の子音をチェックできるように0xfeで特別な対応（UNNCO -> UNCOと打てるように）
     {DV_N, X2HEX_EX2(X_N), X2HEX(X_N), 47-2, 1},
     // 子音
@@ -12,11 +14,10 @@ static roma roma_list[] = {
     {DV_C, X2HEX(X_C), X2HEX(X_K), 1, 2}, {DV_C, X2HEX(X_C), X2HEX(X_K), 44-5, 44-5},
     {DV_D, X2HEX(X_D), X2HEX(X_D), 1, 2}, {DV_D, X2HEX(X_D), X2HEX(X_D), 42-6, 42-6},
     {DV_T, X2HEX(X_T), X2HEX(X_T), 1, 2}, {DV_T, X2HEX(X_T), X2HEX(X_T), 40-10, 40-10},
-    //{DV_H, X2HEX(X_H), X2HEX(X_H), 1, 3}, {DV_H, X2HEX(X_H), X2HEX(X_H), 38-5, 38-5},
     {DV_H, X2HEX_EX3(X_H), X2HEX(X_F), 1, 3}, {DV_H, X2HEX_EX3(X_H), X2HEX(X_F), 1, 1},
-    // H,HHの次がWだったらFにする
-    {DV_W, X2HEX_EX4(X_W), X2HEX(X_UNDEF), 37-1, 37-1},
-    // ここまで（追加分が上に影響）
+    // h,hh の次が w だったら hw,hhw は f,ff にする(ファ行)
+    {DV_W, X2HEX_EX4(X_W), X2HEX(X_UNDEF), 37-4, 37-4},
+
     {DV_B, X2HEX(X_B), X2HEX(X_B), 1, 2}, {DV_B, X2HEX(X_B), X2HEX(X_B), 35-4, 35-4},
     {DV_M, X2HEX(X_M), X2HEX(X_M), 1, 2}, {DV_M, X2HEX(X_M), X2HEX(X_M), 33-4, 33-4},
     // h を y にする
@@ -36,7 +37,7 @@ static roma roma_list[] = {
     // ヵ,ヶ,っ x[ck](xca xka xce xke) xt(xtu)
     {DV_C, X2HEX(X_C), X2HEX(X_K), 9, 1}, {DV_K, X2HEX(X_K), X2HEX(X_K), 8, 1}, {DV_T, X2HEX(X_T), X2HEX(X_T), 7, 5},
     {DV_H, X2HEX(X_H), X2HEX(X_H), 6, 1}, // テャ,デャ,ウァ行([tdw]h)
-    {DV_W, X2HEX(X_W), X2HEX(X_W), 5, 1}, // クァ,グァ,トァ,ドァ,ファ[cgtdh]w
+    {DV_W, X2HEX(X_W), X2HEX(X_W), 5, 1}, // クァ,グァ,トァ,ドァ[cgtd]w
     {DV_N, X2HEX(X_N), X2HEX(X_Y), 4, 3},
     {DV_W, X2HEX(X_W), X2HEX(X_W), 3, 1}, // クァ,スァ,ズァ,ヮ[kqszx]w(xwa)
     {DV_H, X2HEX(X_H), X2HEX(X_Y), 2, 1},
@@ -57,7 +58,8 @@ static roma roma_list[] = {
 // n なら な行チェックし、な行じゃなければ、次は子音
 static roma* next = NULL;
 // 前回疑似COMBOキー
-static bool is_prev_like_combo = false;
+static bool is_prev_like_combo_a = false; // コンボ成立でdvorakjp有効
+static bool is_prev_like_combo_b = false; // コンボ成立でdvorakjp無効
 static roma* current = roma_list;
 static char raw_stack[10] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};
 static unsigned char raw_count = 0;
@@ -83,7 +85,8 @@ void reset_dvorakjp_variables(void)
 {
     current = roma_list;
     next = NULL;
-    is_prev_like_combo = false;
+    is_prev_like_combo_a = false;
+    is_prev_like_combo_b = false;
     raw_count = 0;
     djp_count = 0;
     raw_stack[raw_count] = '\0';
@@ -98,21 +101,34 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
             char dvorakjp = current->dvorakjp & X_MASK;
             bool is_vowels_expantion = (current->raw & ~X_MASK) == EX1_BIT;
             bool is_nagyou_possibility = (current->raw & ~X_MASK) == EX2_BIT;
-            bool is_like_combo = (current->raw & ~X_MASK) == EX3_BIT;
+            bool is_like_combo_a = (current->raw & ~X_MASK) == EX3_BIT;
+            bool is_like_combo_b = (current->raw & ~X_MASK) == EX5_BIT;
             bool is_like_combo_end = (current->raw & ~X_MASK) == EX4_BIT;
-            if (raw_count > 0 || raw != dvorakjp || is_like_combo) {
-                if (is_like_combo) {
+            if (raw_count > 0 || raw != dvorakjp || is_like_combo_a || is_like_combo_b) {
+                if (is_like_combo_a) {
                     // 疑似コンボ開始
-                    is_prev_like_combo = true;
-                } else if (is_prev_like_combo && is_like_combo_end) {
+                    is_prev_like_combo_a = true;
+                } else if (is_like_combo_b) {
+                    // 疑似コンボ開始
+                    is_prev_like_combo_b = true;
+                } else if (is_prev_like_combo_a && is_like_combo_end) {
                     // 疑似コンボ合致、積んだdvorakで確定
-                    is_prev_like_combo = false;
-                } else if (is_prev_like_combo) {
+                    is_prev_like_combo_a = false;
+                } else if (is_prev_like_combo_b && !is_like_combo_end) {
+                    // 疑似コンボ合致せず、積んだdvorakで確定
+                    is_prev_like_combo_b = false;
+                } else if (is_prev_like_combo_a) {
                     // 疑似コンボ合致せず、これまでの生入力を転記
                     // TODO: 途中までコンボ関係なしに変更してた場合も上書かれてしまう
                     sprintf(djp_stack, "%s", raw_stack);
                     djp_count = raw_count;
-                    is_prev_like_combo = false;
+                    is_prev_like_combo_a = false;
+                } else if (is_prev_like_combo_b && is_like_combo_end) {
+                    // 疑似コンボ合致、これまでの生入力を転記
+                    // TODO: 途中までコンボ関係なしに変更してた場合も上書かれてしまう
+                    sprintf(djp_stack, "%s", raw_stack);
+                    djp_count = raw_count;
+                    is_prev_like_combo_b = false;
                 }
                 if (raw >= X2HEX(X_A)) {
                     // 有効な値かを判定
