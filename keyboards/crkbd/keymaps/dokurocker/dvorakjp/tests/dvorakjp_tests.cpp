@@ -53,7 +53,7 @@ TEST(DvorakjpTest, VowelsTest) {
     ASSERT_STREQ("xaxixuxexo", send_string_output);
     // いぇ
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_Y, DV_E});
+    DvorakjpTest::Input({DV_F, DV_E});
     ASSERT_STREQ("ye", send_string_output);
     // うぁ行の撥音拡張
     DvorakjpTest::ClearOutput();
@@ -72,7 +72,7 @@ TEST(DvorakjpTest, VowelsTest) {
     ASSERT_STREQ("xannxennxonn", send_string_output);
     // いぇ の撥音拡張
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_Y, DV_J});
+    DvorakjpTest::Input({DV_F, DV_J});
     ASSERT_STREQ("yenn", send_string_output);
     // うぁ行の二重母音拡張
     DvorakjpTest::ClearOutput();
@@ -88,7 +88,7 @@ TEST(DvorakjpTest, VowelsTest) {
     ASSERT_STREQ("xaixeixou", send_string_output);
     // いぇ の二重母音拡張
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_Y, DV_DOT});
+    DvorakjpTest::Input({DV_F, DV_DOT});
     ASSERT_STREQ("yei", send_string_output);
 }
 
@@ -97,7 +97,7 @@ TEST(DvorakjpTest, KTest) {
     // 通常(k)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_K, DV_A, DV_K, DV_I, DV_K, DV_U, DV_K, DV_E, DV_K, DV_O});
-    ASSERT_STREQ("kakikukeko", send_string_output);
+    ASSERT_STRNE("kakikukeko", send_string_output);
     // 通常(c)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_C, DV_A, DV_C, DV_I, DV_C, DV_U, DV_C, DV_E, DV_C, DV_O});
@@ -108,19 +108,19 @@ TEST(DvorakjpTest, KTest) {
     ASSERT_STRNE("kannkinnkunnkennkonn", send_string_output);
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_K, DV_SCLN, DV_K, DV_X, DV_K, DV_J, DV_K, DV_Q});
-    ASSERT_STREQ("kannkinnkennkonn", send_string_output);
+    ASSERT_STRNE("kannkinnkennkonn", send_string_output);
     // 撥音拡張(c)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_C, DV_SCLN, DV_C, DV_X, DV_C, DV_K, DV_C, DV_J, DV_C, DV_Q});
     ASSERT_STREQ("kannkinnkunnkennkonn", send_string_output);
     // 二重母音拡張(k)
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_K, DV_QUOT, DV_K, DV_DOT, DV_K, DV_COMM});
-    ASSERT_STREQ("kaikeikou", send_string_output);
+    DvorakjpTest::Input({DV_K, DV_QUOT, DV_K, DV_Y, DV_K, DV_P, DV_K, DV_DOT, DV_K, DV_COMM});
+    ASSERT_STRNE("kaikuikuukeikou", send_string_output);
     // 二重母音拡張(c)
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_C, DV_QUOT, DV_C, DV_DOT, DV_C, DV_COMM});
-    ASSERT_STREQ("kaikeikou", send_string_output);
+    DvorakjpTest::Input({DV_C, DV_QUOT, DV_C, DV_Y, DV_C, DV_P, DV_C, DV_DOT, DV_C, DV_COMM});
+    ASSERT_STREQ("kaikuikuukeikou", send_string_output);
 }
 
 // きゃ行
@@ -128,15 +128,15 @@ TEST(DvorakjpTest, KyTest) {
     // 通常(ky)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_K, DV_Y, DV_A, DV_K, DV_Y, DV_I, DV_K, DV_Y, DV_U, DV_K, DV_Y, DV_E, DV_K, DV_Y, DV_O});
-    ASSERT_STREQ("kyakyikyukyekyo", send_string_output);
+    ASSERT_STRNE("kyakyikyukyekyo", send_string_output);
     // 通常(cy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_C, DV_Y, DV_A, DV_C, DV_Y, DV_I, DV_C, DV_Y, DV_U, DV_C, DV_Y, DV_E, DV_C, DV_Y, DV_O});
-    ASSERT_STREQ("kyakyikyukyekyo", send_string_output);
+    ASSERT_STRNE("kyakyikyukyekyo", send_string_output);
     // 通常(kh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_K, DV_H, DV_A, DV_K, DV_H, DV_I, DV_K, DV_H, DV_U, DV_K, DV_H, DV_E, DV_K, DV_H, DV_O});
-    ASSERT_STREQ("kyakyikyukyekyo", send_string_output);
+    ASSERT_STRNE("kyakyikyukyekyo", send_string_output);
     // 通常(ch) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_C, DV_H, DV_A, DV_C, DV_H, DV_I, DV_C, DV_H, DV_U, DV_C, DV_H, DV_E, DV_C, DV_H, DV_O});
@@ -152,15 +152,15 @@ TEST(DvorakjpTest, KyTest) {
     // 撥音拡張(ky)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_K, DV_Y, DV_SCLN, DV_K, DV_Y, DV_X, DV_K, DV_Y, DV_K, DV_K, DV_Y, DV_J, DV_K, DV_Y, DV_Q});
-    ASSERT_STREQ("kyannkyinnkyunnkyennkyonn", send_string_output);
+    ASSERT_STRNE("kyannkyinnkyunnkyennkyonn", send_string_output);
     // 撥音拡張(cy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_C, DV_Y, DV_SCLN, DV_C, DV_Y, DV_X, DV_C, DV_Y, DV_K, DV_C, DV_Y, DV_J, DV_C, DV_Y, DV_Q});
-    ASSERT_STREQ("kyannkyinnkyunnkyennkyonn", send_string_output);
+    ASSERT_STRNE("kyannkyinnkyunnkyennkyonn", send_string_output);
     // 撥音拡張(kh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_K, DV_H, DV_SCLN, DV_K, DV_H, DV_X, DV_K, DV_H, DV_K, DV_K, DV_H, DV_J, DV_K, DV_H, DV_Q});
-    ASSERT_STREQ("kyannkyinnkyunnkyennkyonn", send_string_output);
+    ASSERT_STRNE("kyannkyinnkyunnkyennkyonn", send_string_output);
     // 撥音拡張(ch) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_C, DV_H, DV_SCLN, DV_C, DV_H, DV_X, DV_C, DV_H, DV_K, DV_C, DV_H, DV_J, DV_C, DV_H, DV_Q});
@@ -176,27 +176,27 @@ TEST(DvorakjpTest, KyTest) {
     // 二重母音拡張(ky)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_K, DV_Y, DV_QUOT, DV_K, DV_Y, DV_DOT, DV_K, DV_Y, DV_COMM});
-    ASSERT_STREQ("kyaikyeikyou", send_string_output);
+    ASSERT_STRNE("kyaikyeikyou", send_string_output);
     // 二重母音拡張(cy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_C, DV_Y, DV_QUOT, DV_C, DV_Y, DV_DOT, DV_C, DV_Y, DV_COMM});
-    ASSERT_STREQ("kyaikyeikyou", send_string_output);
+    ASSERT_STRNE("kyaikyeikyou", send_string_output);
     // 二重母音拡張(kh)
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_K, DV_H, DV_QUOT, DV_K, DV_H, DV_DOT, DV_K, DV_H, DV_COMM});
-    ASSERT_STREQ("kyaikyeikyou", send_string_output);
+    DvorakjpTest::Input({DV_K, DV_H, DV_QUOT, DV_K, DV_H, DV_Y, DV_K, DV_H, DV_P, DV_K, DV_H, DV_DOT, DV_K, DV_H, DV_COMM});
+    ASSERT_STRNE("kyaikyuikyuukyeikyou", send_string_output);
     // 二重母音拡張(ch) ※変換しない
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_C, DV_H, DV_QUOT, DV_C, DV_H, DV_DOT, DV_C, DV_H, DV_COMM});
-    ASSERT_STRNE("kyaikyeikyou", send_string_output);
+    DvorakjpTest::Input({DV_C, DV_H, DV_QUOT, DV_C, DV_H, DV_Y, DV_C, DV_H, DV_P, DV_C, DV_H, DV_DOT, DV_C, DV_H, DV_COMM});
+    ASSERT_STRNE("kyaikyuikyuukyeikyou", send_string_output);
     // 二重母音拡張(kn) ※変換しない
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_K, DV_N, DV_QUOT, DV_K, DV_N, DV_DOT, DV_K, DV_N, DV_COMM});
-    ASSERT_STRNE("kyaikyeikyou", send_string_output);
+    DvorakjpTest::Input({DV_K, DV_N, DV_QUOT, DV_K, DV_N, DV_Y, DV_K, DV_N, DV_P, DV_K, DV_N, DV_DOT, DV_K, DV_N, DV_COMM});
+    ASSERT_STRNE("kyaikyuikyuukyeikyou", send_string_output);
     // 二重母音拡張(cn)
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_C, DV_N, DV_QUOT, DV_C, DV_N, DV_DOT, DV_C, DV_N, DV_COMM});
-    ASSERT_STREQ("kyaikyeikyou", send_string_output);
+    DvorakjpTest::Input({DV_C, DV_N, DV_QUOT, DV_C, DV_N, DV_Y, DV_C, DV_N, DV_P, DV_C, DV_N, DV_DOT, DV_C, DV_N, DV_COMM});
+    ASSERT_STREQ("kyaikyuikyuukyeikyou", send_string_output);
 }
 
 // くぁ行
@@ -208,7 +208,7 @@ TEST(DvorakjpTest, QTest) {
     // 通常(kw)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_K, DV_W, DV_A, DV_K, DV_W, DV_I, DV_K, DV_W, DV_U, DV_K, DV_W, DV_E, DV_K, DV_W, DV_O});
-    ASSERT_STREQ("kwakwikwukwekwo", send_string_output);
+    ASSERT_STRNE("kwakwikwukwekwo", send_string_output);
     // 通常(cw)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_C, DV_W, DV_A, DV_C, DV_W, DV_I, DV_C, DV_W, DV_U, DV_C, DV_W, DV_E, DV_C, DV_W, DV_O});
@@ -223,23 +223,23 @@ TEST(DvorakjpTest, QTest) {
     // 撥音拡張(kw)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_K, DV_W, DV_SCLN, DV_K, DV_W, DV_X, DV_K, DV_W, DV_K, DV_K, DV_W, DV_J, DV_K, DV_W, DV_Q});
-    ASSERT_STREQ("kwannkwinnkwunnkwennkwonn", send_string_output);
+    ASSERT_STRNE("kwannkwinnkwunnkwennkwonn", send_string_output);
     // 撥音拡張(cw)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_C, DV_W, DV_SCLN, DV_C, DV_W, DV_X, DV_C, DV_W, DV_K, DV_C, DV_W, DV_J, DV_C, DV_W, DV_Q});
     ASSERT_STREQ("kwannkwinnkwunnkwennkwonn", send_string_output);
     // 二重母音拡張(q)
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_Q, DV_QUOT, DV_Q, DV_DOT, DV_Q, DV_COMM});
-    ASSERT_STREQ("qaiqeiqou", send_string_output);
+    DvorakjpTest::Input({DV_Q, DV_QUOT, DV_Q, DV_Y, DV_Q, DV_P, DV_Q, DV_DOT, DV_Q, DV_COMM});
+    ASSERT_STREQ("qaiquiquuqeiqou", send_string_output);
     // 二重母音拡張(kw)
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_K, DV_W, DV_QUOT, DV_K, DV_W, DV_DOT, DV_K, DV_W, DV_COMM});
-    ASSERT_STREQ("kwaikweikwou", send_string_output);
+    DvorakjpTest::Input({DV_K, DV_W, DV_QUOT, DV_K, DV_W, DV_Y, DV_K, DV_W, DV_P, DV_K, DV_W, DV_DOT, DV_K, DV_W, DV_COMM});
+    ASSERT_STRNE("kwaikwuikwuukweikwou", send_string_output);
     // 二重母音拡張(cw)
     DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_C, DV_W, DV_QUOT, DV_C, DV_W, DV_DOT, DV_C, DV_W, DV_COMM});
-    ASSERT_STREQ("kwaikweikwou", send_string_output);
+    DvorakjpTest::Input({DV_C, DV_W, DV_QUOT, DV_C, DV_W, DV_Y, DV_C, DV_W, DV_P, DV_C, DV_W, DV_DOT, DV_C, DV_W, DV_COMM});
+    ASSERT_STREQ("kwaikwuikwuukweikwou", send_string_output);
 }
 
 // くゃ行,くゎ
@@ -247,7 +247,7 @@ TEST(DvorakjpTest, QyTest) {
     // 通常(qy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Q, DV_Y, DV_A, DV_Q, DV_Y, DV_I, DV_Q, DV_Y, DV_U, DV_Q, DV_Y, DV_E, DV_Q, DV_Y, DV_O});
-    ASSERT_STREQ("qyaqyiqyuqyeqyo", send_string_output);
+    ASSERT_STRNE("qyaqyiqyuqyeqyo", send_string_output);
     // 通常(qh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Q, DV_H, DV_A, DV_Q, DV_H, DV_I, DV_Q, DV_H, DV_U, DV_Q, DV_H, DV_E, DV_Q, DV_H, DV_O});
@@ -259,7 +259,7 @@ TEST(DvorakjpTest, QyTest) {
     // 撥音拡張(qy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Q, DV_Y, DV_SCLN, DV_Q, DV_Y, DV_X, DV_Q, DV_Y, DV_K, DV_Q, DV_Y, DV_J, DV_Q, DV_Y, DV_Q});
-    ASSERT_STREQ("qyannqyinnqyunnqyennqyonn", send_string_output);
+    ASSERT_STRNE("qyannqyinnqyunnqyennqyonn", send_string_output);
     // 撥音拡張(qh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Q, DV_H, DV_SCLN, DV_Q, DV_H, DV_X, DV_Q, DV_H, DV_K, DV_Q, DV_H, DV_J, DV_Q, DV_H, DV_Q});
@@ -271,7 +271,7 @@ TEST(DvorakjpTest, QyTest) {
     // 二重母音拡張(qy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Q, DV_Y, DV_QUOT, DV_Q, DV_Y, DV_DOT, DV_Q, DV_Y, DV_COMM});
-    ASSERT_STREQ("qyaiqyeiqyou", send_string_output);
+    ASSERT_STRNE("qyaiqyeiqyou", send_string_output);
     // 二重母音拡張(qh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Q, DV_H, DV_QUOT, DV_Q, DV_H, DV_DOT, DV_Q, DV_H, DV_COMM});
@@ -307,7 +307,7 @@ TEST(DvorakjpTest, GyTest) {
     // 通常(gy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_G, DV_Y, DV_A, DV_G, DV_Y, DV_I, DV_G, DV_Y, DV_U, DV_G, DV_Y, DV_E, DV_G, DV_Y, DV_O});
-    ASSERT_STREQ("gyagyigyugyegyo", send_string_output);
+    ASSERT_STRNE("gyagyigyugyegyo", send_string_output);
     // 通常(gh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_G, DV_H, DV_A, DV_G, DV_H, DV_I, DV_G, DV_H, DV_U, DV_G, DV_H, DV_E, DV_G, DV_H, DV_O});
@@ -319,7 +319,7 @@ TEST(DvorakjpTest, GyTest) {
     // 撥音拡張(gy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_G, DV_Y, DV_SCLN, DV_G, DV_Y, DV_X, DV_G, DV_Y, DV_K, DV_G, DV_Y, DV_J, DV_G, DV_Y, DV_Q});
-    ASSERT_STREQ("gyanngyinngyunngyenngyonn", send_string_output);
+    ASSERT_STRNE("gyanngyinngyunngyenngyonn", send_string_output);
     // 撥音拡張(gh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_G, DV_H, DV_SCLN, DV_G, DV_H, DV_X, DV_G, DV_H, DV_K, DV_G, DV_H, DV_J, DV_G, DV_H, DV_Q});
@@ -331,7 +331,7 @@ TEST(DvorakjpTest, GyTest) {
     // 二重母音拡張(gy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_G, DV_Y, DV_QUOT, DV_G, DV_Y, DV_DOT, DV_G, DV_Y, DV_COMM});
-    ASSERT_STREQ("gyaigyeigyou", send_string_output);
+    ASSERT_STRNE("gyaigyeigyou", send_string_output);
     // 二重母音拡張(gh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_G, DV_H, DV_QUOT, DV_G, DV_H, DV_DOT, DV_G, DV_H, DV_COMM});
@@ -360,6 +360,10 @@ TEST(DvorakjpTest, GwTest) {
 
 // ヵ,ヶ
 TEST(DvorakjpTest, XkTest) {
+    // 通常
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input({DV_X, DV_K, DV_A, DV_X, DV_K, DV_E, DV_X, DV_C, DV_A, DV_X, DV_C, DV_E});
+    ASSERT_STREQ("xkaxkexkaxke", send_string_output);
     // 通常
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_X, DV_K, DV_A, DV_X, DV_K, DV_E, DV_X, DV_C, DV_A, DV_X, DV_C, DV_E});
@@ -395,7 +399,7 @@ TEST(DvorakjpTest, SyTest) {
     // 通常(sy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_S, DV_Y, DV_A, DV_S, DV_Y, DV_I, DV_S, DV_Y, DV_U, DV_S, DV_Y, DV_E, DV_S, DV_Y, DV_O});
-    ASSERT_STREQ("syasyisyusyesyo", send_string_output);
+    ASSERT_STRNE("syasyisyusyesyo", send_string_output);
     // 通常(sh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_S, DV_H, DV_A, DV_S, DV_H, DV_I, DV_S, DV_H, DV_U, DV_S, DV_H, DV_E, DV_S, DV_H, DV_O});
@@ -407,7 +411,7 @@ TEST(DvorakjpTest, SyTest) {
     // 撥音拡張(sy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_S, DV_Y, DV_SCLN, DV_S, DV_Y, DV_X, DV_S, DV_Y, DV_K, DV_S, DV_Y, DV_J, DV_S, DV_Y, DV_Q});
-    ASSERT_STREQ("syannsyinnsyunnsyennsyonn", send_string_output);
+    ASSERT_STRNE("syannsyinnsyunnsyennsyonn", send_string_output);
     // 撥音拡張(sh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_S, DV_H, DV_SCLN, DV_S, DV_H, DV_X, DV_S, DV_H, DV_K, DV_S, DV_H, DV_J, DV_S, DV_H, DV_Q});
@@ -419,7 +423,7 @@ TEST(DvorakjpTest, SyTest) {
     // 二重母音拡張(sy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_S, DV_Y, DV_QUOT, DV_S, DV_Y, DV_DOT, DV_S, DV_Y, DV_COMM});
-    ASSERT_STREQ("syaisyeisyou", send_string_output);
+    ASSERT_STRNE("syaisyeisyou", send_string_output);
     // 二重母音拡張(sh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_S, DV_H, DV_QUOT, DV_S, DV_H, DV_DOT, DV_S, DV_H, DV_COMM});
@@ -467,7 +471,7 @@ TEST(DvorakjpTest, ZyTest) {
     // 通常(zy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Z, DV_Y, DV_A, DV_Z, DV_Y, DV_I, DV_Z, DV_Y, DV_U, DV_Z, DV_Y, DV_E, DV_Z, DV_Y, DV_O});
-    ASSERT_STREQ("zyazyizyuzyezyo", send_string_output);
+    ASSERT_STRNE("zyazyizyuzyezyo", send_string_output);
     // 通常(zh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Z, DV_H, DV_A, DV_Z, DV_H, DV_I, DV_Z, DV_H, DV_U, DV_Z, DV_H, DV_E, DV_Z, DV_H, DV_O});
@@ -479,7 +483,7 @@ TEST(DvorakjpTest, ZyTest) {
     // 撥音拡張(zy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Z, DV_Y, DV_SCLN, DV_Z, DV_Y, DV_X, DV_Z, DV_Y, DV_K, DV_Z, DV_Y, DV_J, DV_Z, DV_Y, DV_Q});
-    ASSERT_STREQ("zyannzyinnzyunnzyennzyonn", send_string_output);
+    ASSERT_STRNE("zyannzyinnzyunnzyennzyonn", send_string_output);
     // 撥音拡張(zh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Z, DV_H, DV_SCLN, DV_Z, DV_H, DV_X, DV_Z, DV_H, DV_K, DV_Z, DV_H, DV_J, DV_Z, DV_H, DV_Q});
@@ -491,7 +495,7 @@ TEST(DvorakjpTest, ZyTest) {
     // 二重母音拡張(zy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Z, DV_Y, DV_QUOT, DV_Z, DV_Y, DV_DOT, DV_Z, DV_Y, DV_COMM});
-    ASSERT_STREQ("zyaizyeizyou", send_string_output);
+    ASSERT_STRNE("zyaizyeizyou", send_string_output);
     // 二重母音拡張(zh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Z, DV_H, DV_QUOT, DV_Z, DV_H, DV_DOT, DV_Z, DV_H, DV_COMM});
@@ -539,7 +543,7 @@ TEST(DvorakjpTest, TyTest) {
     // 通常(ty)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_T, DV_Y, DV_A, DV_T, DV_Y, DV_I, DV_T, DV_Y, DV_U, DV_T, DV_Y, DV_E, DV_T, DV_Y, DV_O});
-    ASSERT_STREQ("tyatyityutyetyo", send_string_output);
+    ASSERT_STRNE("tyatyityutyetyo", send_string_output);
     // 通常(th) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_T, DV_H, DV_A, DV_T, DV_H, DV_I, DV_T, DV_H, DV_U, DV_T, DV_H, DV_E, DV_T, DV_H, DV_O});
@@ -551,7 +555,7 @@ TEST(DvorakjpTest, TyTest) {
     // 撥音拡張(ty)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_T, DV_Y, DV_SCLN, DV_T, DV_Y, DV_X, DV_T, DV_Y, DV_K, DV_T, DV_Y, DV_J, DV_T, DV_Y, DV_Q});
-    ASSERT_STREQ("tyanntyinntyunntyenntyonn", send_string_output);
+    ASSERT_STRNE("tyanntyinntyunntyenntyonn", send_string_output);
     // 撥音拡張(th) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_T, DV_H, DV_SCLN, DV_T, DV_H, DV_X, DV_T, DV_H, DV_K, DV_T, DV_H, DV_J, DV_T, DV_H, DV_Q});
@@ -563,7 +567,7 @@ TEST(DvorakjpTest, TyTest) {
     // 二重母音拡張(ty)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_T, DV_Y, DV_QUOT, DV_T, DV_Y, DV_DOT, DV_T, DV_Y, DV_COMM});
-    ASSERT_STREQ("tyaityeityou", send_string_output);
+    ASSERT_STRNE("tyaityeityou", send_string_output);
     // 二重母音拡張(th) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_T, DV_H, DV_QUOT, DV_T, DV_H, DV_DOT, DV_T, DV_H, DV_COMM});
@@ -643,7 +647,7 @@ TEST(DvorakjpTest, DyTest) {
     // 通常(dy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_D, DV_Y, DV_A, DV_D, DV_Y, DV_I, DV_D, DV_Y, DV_U, DV_D, DV_Y, DV_E, DV_D, DV_Y, DV_O});
-    ASSERT_STREQ("dyadyidyudyedyo", send_string_output);
+    ASSERT_STRNE("dyadyidyudyedyo", send_string_output);
     // 通常(dh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_D, DV_H, DV_A, DV_D, DV_H, DV_I, DV_D, DV_H, DV_U, DV_D, DV_H, DV_E, DV_D, DV_H, DV_O});
@@ -655,7 +659,7 @@ TEST(DvorakjpTest, DyTest) {
     // 撥音拡張(dy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_D, DV_Y, DV_SCLN, DV_D, DV_Y, DV_X, DV_D, DV_Y, DV_K, DV_D, DV_Y, DV_J, DV_D, DV_Y, DV_Q});
-    ASSERT_STREQ("dyanndyinndyunndyenndyonn", send_string_output);
+    ASSERT_STRNE("dyanndyinndyunndyenndyonn", send_string_output);
     // 撥音拡張(dh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_D, DV_H, DV_SCLN, DV_D, DV_H, DV_X, DV_D, DV_H, DV_K, DV_D, DV_H, DV_J, DV_D, DV_H, DV_Q});
@@ -667,7 +671,7 @@ TEST(DvorakjpTest, DyTest) {
     // 二重母音拡張(dy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_D, DV_Y, DV_QUOT, DV_D, DV_Y, DV_DOT, DV_D, DV_Y, DV_COMM});
-    ASSERT_STREQ("dyaidyeidyou", send_string_output);
+    ASSERT_STRNE("dyaidyeidyou", send_string_output);
     // 二重母音拡張(dh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_D, DV_H, DV_QUOT, DV_D, DV_H, DV_DOT, DV_D, DV_H, DV_COMM});
@@ -732,7 +736,7 @@ TEST(DvorakjpTest, NyTest) {
     // 通常(ny)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_N, DV_Y, DV_A, DV_N, DV_Y, DV_I, DV_N, DV_Y, DV_U, DV_N, DV_Y, DV_E, DV_N, DV_Y, DV_O});
-    ASSERT_STREQ("nyanyinyunyenyo", send_string_output);
+    ASSERT_STRNE("nyanyinyunyenyo", send_string_output);
     // 通常(nh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_N, DV_H, DV_A, DV_N, DV_H, DV_I, DV_N, DV_H, DV_U, DV_N, DV_H, DV_E, DV_N, DV_H, DV_O});
@@ -744,7 +748,7 @@ TEST(DvorakjpTest, NyTest) {
     // 撥音拡張(ny)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_N, DV_Y, DV_SCLN, DV_N, DV_Y, DV_X, DV_N, DV_Y, DV_K, DV_N, DV_Y, DV_J, DV_N, DV_Y, DV_Q});
-    ASSERT_STREQ("nyannnyinnnyunnnyennnyonn", send_string_output);
+    ASSERT_STRNE("nyannnyinnnyunnnyennnyonn", send_string_output);
     // 撥音拡張(nh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_N, DV_H, DV_SCLN, DV_N, DV_H, DV_X, DV_N, DV_H, DV_K, DV_N, DV_H, DV_J, DV_N, DV_H, DV_Q});
@@ -756,7 +760,7 @@ TEST(DvorakjpTest, NyTest) {
     // 二重母音拡張(ny)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_N, DV_Y, DV_QUOT, DV_N, DV_Y, DV_DOT, DV_N, DV_Y, DV_COMM});
-    ASSERT_STREQ("nyainyeinyou", send_string_output);
+    ASSERT_STRNE("nyainyeinyou", send_string_output);
     // 二重母音拡張(nh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_N, DV_H, DV_QUOT, DV_N, DV_H, DV_DOT, DV_N, DV_H, DV_COMM});
@@ -788,7 +792,7 @@ TEST(DvorakjpTest, HyTest) {
     // 通常(hy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_H, DV_Y, DV_A, DV_H, DV_Y, DV_I, DV_H, DV_Y, DV_U, DV_H, DV_Y, DV_E, DV_H, DV_Y, DV_O});
-    ASSERT_STREQ("hyahyihyuhyehyo", send_string_output);
+    ASSERT_STRNE("hyahyihyuhyehyo", send_string_output);
     // 通常(hh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_H, DV_H, DV_A, DV_H, DV_H, DV_I, DV_H, DV_H, DV_U, DV_H, DV_H, DV_E, DV_H, DV_H, DV_O});
@@ -800,7 +804,7 @@ TEST(DvorakjpTest, HyTest) {
     // 撥音拡張(hy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_H, DV_Y, DV_SCLN, DV_H, DV_Y, DV_X, DV_H, DV_Y, DV_K, DV_H, DV_Y, DV_J, DV_H, DV_Y, DV_Q});
-    ASSERT_STREQ("hyannhyinnhyunnhyennhyonn", send_string_output);
+    ASSERT_STRNE("hyannhyinnhyunnhyennhyonn", send_string_output);
     // 撥音拡張(hh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_H, DV_H, DV_SCLN, DV_H, DV_H, DV_X, DV_H, DV_H, DV_K, DV_H, DV_H, DV_J, DV_H, DV_H, DV_Q});
@@ -812,7 +816,7 @@ TEST(DvorakjpTest, HyTest) {
     // 二重母音拡張(hy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_H, DV_Y, DV_QUOT, DV_H, DV_Y, DV_DOT, DV_H, DV_Y, DV_COMM});
-    ASSERT_STREQ("hyaihyeihyou", send_string_output);
+    ASSERT_STRNE("hyaihyeihyou", send_string_output);
     // 二重母音拡張(hh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_H, DV_H, DV_QUOT, DV_H, DV_H, DV_DOT, DV_H, DV_H, DV_COMM});
@@ -856,7 +860,7 @@ TEST(DvorakjpTest, FyTest) {
     // 通常(fy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_F, DV_Y, DV_A, DV_F, DV_Y, DV_I, DV_F, DV_Y, DV_U, DV_F, DV_Y, DV_E, DV_F, DV_Y, DV_O});
-    ASSERT_STREQ("fyafyifyufyefyo", send_string_output);
+    ASSERT_STRNE("fyafyifyufyefyo", send_string_output);
     // 通常(fh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_F, DV_H, DV_A, DV_F, DV_H, DV_I, DV_F, DV_H, DV_U, DV_F, DV_H, DV_E, DV_F, DV_H, DV_O});
@@ -868,7 +872,7 @@ TEST(DvorakjpTest, FyTest) {
     // 撥音拡張(fy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_F, DV_Y, DV_SCLN, DV_F, DV_Y, DV_X, DV_F, DV_Y, DV_K, DV_F, DV_Y, DV_J, DV_F, DV_Y, DV_Q});
-    ASSERT_STREQ("fyannfyinnfyunnfyennfyonn", send_string_output);
+    ASSERT_STRNE("fyannfyinnfyunnfyennfyonn", send_string_output);
     // 撥音拡張(fh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_F, DV_H, DV_SCLN, DV_F, DV_H, DV_X, DV_F, DV_H, DV_K, DV_F, DV_H, DV_J, DV_F, DV_H, DV_Q});
@@ -880,7 +884,7 @@ TEST(DvorakjpTest, FyTest) {
     // 二重母音拡張(fy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_F, DV_Y, DV_QUOT, DV_F, DV_Y, DV_DOT, DV_F, DV_Y, DV_COMM});
-    ASSERT_STREQ("fyaifyeifyou", send_string_output);
+    ASSERT_STRNE("fyaifyeifyou", send_string_output);
     // 二重母音拡張(fh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_F, DV_H, DV_QUOT, DV_F, DV_H, DV_DOT, DV_F, DV_H, DV_COMM});
@@ -912,7 +916,7 @@ TEST(DvorakjpTest, ByTest) {
     // 通常(by)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_B, DV_Y, DV_A, DV_B, DV_Y, DV_I, DV_B, DV_Y, DV_U, DV_B, DV_Y, DV_E, DV_B, DV_Y, DV_O});
-    ASSERT_STREQ("byabyibyubyebyo", send_string_output);
+    ASSERT_STRNE("byabyibyubyebyo", send_string_output);
     // 通常(bh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_B, DV_H, DV_A, DV_B, DV_H, DV_I, DV_B, DV_H, DV_U, DV_B, DV_H, DV_E, DV_B, DV_H, DV_O});
@@ -924,7 +928,7 @@ TEST(DvorakjpTest, ByTest) {
     // 撥音拡張(by)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_B, DV_Y, DV_SCLN, DV_B, DV_Y, DV_X, DV_B, DV_Y, DV_K, DV_B, DV_Y, DV_J, DV_B, DV_Y, DV_Q});
-    ASSERT_STREQ("byannbyinnbyunnbyennbyonn", send_string_output);
+    ASSERT_STRNE("byannbyinnbyunnbyennbyonn", send_string_output);
     // 撥音拡張(bh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_B, DV_H, DV_SCLN, DV_B, DV_H, DV_X, DV_B, DV_H, DV_K, DV_B, DV_H, DV_J, DV_B, DV_H, DV_Q});
@@ -936,7 +940,7 @@ TEST(DvorakjpTest, ByTest) {
     // 二重母音拡張(by)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_B, DV_Y, DV_QUOT, DV_B, DV_Y, DV_DOT, DV_B, DV_Y, DV_COMM});
-    ASSERT_STREQ("byaibyeibyou", send_string_output);
+    ASSERT_STRNE("byaibyeibyou", send_string_output);
     // 二重母音拡張(bh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_B, DV_H, DV_QUOT, DV_B, DV_H, DV_DOT, DV_B, DV_H, DV_COMM});
@@ -968,7 +972,7 @@ TEST(DvorakjpTest, VyTest) {
     // 通常(vy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_V, DV_Y, DV_A, DV_V, DV_Y, DV_I, DV_V, DV_Y, DV_U, DV_V, DV_Y, DV_E, DV_V, DV_Y, DV_O});
-    ASSERT_STREQ("vyavyivyuvyevyo", send_string_output);
+    ASSERT_STRNE("vyavyivyuvyevyo", send_string_output);
     // 通常(vh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_V, DV_H, DV_A, DV_V, DV_H, DV_I, DV_V, DV_H, DV_U, DV_V, DV_H, DV_E, DV_V, DV_H, DV_O});
@@ -980,7 +984,7 @@ TEST(DvorakjpTest, VyTest) {
     // 撥音拡張(vy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_V, DV_Y, DV_SCLN, DV_V, DV_Y, DV_X, DV_V, DV_Y, DV_K, DV_V, DV_Y, DV_J, DV_V, DV_Y, DV_Q});
-    ASSERT_STREQ("vyannvyinnvyunnvyennvyonn", send_string_output);
+    ASSERT_STRNE("vyannvyinnvyunnvyennvyonn", send_string_output);
     // 撥音拡張(vh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_V, DV_H, DV_SCLN, DV_V, DV_H, DV_X, DV_V, DV_H, DV_K, DV_V, DV_H, DV_J, DV_V, DV_H, DV_Q});
@@ -992,7 +996,7 @@ TEST(DvorakjpTest, VyTest) {
     // 二重母音拡張(vy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_V, DV_Y, DV_QUOT, DV_V, DV_Y, DV_DOT, DV_V, DV_Y, DV_COMM});
-    ASSERT_STREQ("vyaivyeivyou", send_string_output);
+    ASSERT_STRNE("vyaivyeivyou", send_string_output);
     // 二重母音拡張(vh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_V, DV_H, DV_QUOT, DV_V, DV_H, DV_DOT, DV_V, DV_H, DV_COMM});
@@ -1008,7 +1012,7 @@ TEST(DvorakjpTest, PTest) {
     // 通常(p)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_P, DV_A, DV_P, DV_I, DV_P, DV_U, DV_P, DV_E, DV_P, DV_O});
-    ASSERT_STREQ("papipupepo", send_string_output);
+    ASSERT_STRNE("papipupepo", send_string_output);
     // 通常(l)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_L, DV_A, DV_L, DV_I, DV_L, DV_U, DV_L, DV_E, DV_L, DV_O});
@@ -1016,7 +1020,7 @@ TEST(DvorakjpTest, PTest) {
     // 撥音拡張(p)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_P, DV_SCLN, DV_P, DV_X, DV_P, DV_K, DV_P, DV_J, DV_P, DV_Q});
-    ASSERT_STREQ("pannpinnpunnpennponn", send_string_output);
+    ASSERT_STRNE("pannpinnpunnpennponn", send_string_output);
     // 撥音拡張(l)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_L, DV_SCLN, DV_L, DV_X, DV_L, DV_K, DV_L, DV_J, DV_L, DV_Q});
@@ -1024,7 +1028,7 @@ TEST(DvorakjpTest, PTest) {
     // 二重母音拡張(p)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_P, DV_QUOT, DV_P, DV_DOT, DV_P, DV_COMM});
-    ASSERT_STREQ("paipeipou", send_string_output);
+    ASSERT_STRNE("paipeipou", send_string_output);
     // 二重母音拡張(l)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_L, DV_QUOT, DV_L, DV_DOT, DV_L, DV_COMM});
@@ -1036,15 +1040,15 @@ TEST(DvorakjpTest, PyTest) {
     // 通常(py)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_P, DV_Y, DV_A, DV_P, DV_Y, DV_I, DV_P, DV_Y, DV_U, DV_P, DV_Y, DV_E, DV_P, DV_Y, DV_O});
-    ASSERT_STREQ("pyapyipyupyepyo", send_string_output);
+    ASSERT_STRNE("pyapyipyupyepyo", send_string_output);
     // 通常(ly)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_L, DV_Y, DV_A, DV_L, DV_Y, DV_I, DV_L, DV_Y, DV_U, DV_L, DV_Y, DV_E, DV_L, DV_Y, DV_O});
-    ASSERT_STREQ("pyapyipyupyepyo", send_string_output);
+    ASSERT_STRNE("pyapyipyupyepyo", send_string_output);
     // 通常(ph)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_P, DV_H, DV_A, DV_P, DV_H, DV_I, DV_P, DV_H, DV_U, DV_P, DV_H, DV_E, DV_P, DV_H, DV_O});
-    ASSERT_STREQ("pyapyipyupyepyo", send_string_output);
+    ASSERT_STRNE("pyapyipyupyepyo", send_string_output);
     // 通常(lh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_L, DV_H, DV_A, DV_L, DV_H, DV_I, DV_L, DV_H, DV_U, DV_L, DV_H, DV_E, DV_L, DV_H, DV_O});
@@ -1060,15 +1064,15 @@ TEST(DvorakjpTest, PyTest) {
     // 撥音拡張(py)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_P, DV_Y, DV_SCLN, DV_P, DV_Y, DV_X, DV_P, DV_Y, DV_K, DV_P, DV_Y, DV_J, DV_P, DV_Y, DV_Q});
-    ASSERT_STREQ("pyannpyinnpyunnpyennpyonn", send_string_output);
+    ASSERT_STRNE("pyannpyinnpyunnpyennpyonn", send_string_output);
     // 撥音拡張(ly)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_L, DV_Y, DV_SCLN, DV_L, DV_Y, DV_X, DV_L, DV_Y, DV_K, DV_L, DV_Y, DV_J, DV_L, DV_Y, DV_Q});
-    ASSERT_STREQ("pyannpyinnpyunnpyennpyonn", send_string_output);
+    ASSERT_STRNE("pyannpyinnpyunnpyennpyonn", send_string_output);
     // 撥音拡張(ph)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_P, DV_H, DV_SCLN, DV_P, DV_H, DV_X, DV_P, DV_H, DV_K, DV_P, DV_H, DV_J, DV_P, DV_H, DV_Q});
-    ASSERT_STREQ("pyannpyinnpyunnpyennpyonn", send_string_output);
+    ASSERT_STRNE("pyannpyinnpyunnpyennpyonn", send_string_output);
     // 撥音拡張(lh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_L, DV_H, DV_SCLN, DV_L, DV_H, DV_X, DV_L, DV_H, DV_K, DV_L, DV_H, DV_J, DV_L, DV_H, DV_Q});
@@ -1084,15 +1088,15 @@ TEST(DvorakjpTest, PyTest) {
     // 二重母音拡張(py)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_P, DV_Y, DV_QUOT, DV_P, DV_Y, DV_DOT, DV_P, DV_Y, DV_COMM});
-    ASSERT_STREQ("pyaipyeipyou", send_string_output);
+    ASSERT_STRNE("pyaipyeipyou", send_string_output);
     // 二重母音拡張(ly)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_L, DV_Y, DV_QUOT, DV_L, DV_Y, DV_DOT, DV_L, DV_Y, DV_COMM});
-    ASSERT_STREQ("pyaipyeipyou", send_string_output);
+    ASSERT_STRNE("pyaipyeipyou", send_string_output);
     // 二重母音拡張(ph)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_P, DV_H, DV_QUOT, DV_P, DV_H, DV_DOT, DV_P, DV_H, DV_COMM});
-    ASSERT_STREQ("pyaipyeipyou", send_string_output);
+    ASSERT_STRNE("pyaipyeipyou", send_string_output);
     // 二重母音拡張(lh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_L, DV_H, DV_QUOT, DV_L, DV_H, DV_DOT, DV_L, DV_H, DV_COMM});
@@ -1128,7 +1132,7 @@ TEST(DvorakjpTest, MyTest) {
     // 通常(my)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_M, DV_Y, DV_A, DV_M, DV_Y, DV_I, DV_M, DV_Y, DV_U, DV_M, DV_Y, DV_E, DV_M, DV_Y, DV_O});
-    ASSERT_STREQ("myamyimyumyemyo", send_string_output);
+    ASSERT_STRNE("myamyimyumyemyo", send_string_output);
     // 通常(mh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_M, DV_H, DV_A, DV_M, DV_H, DV_I, DV_M, DV_H, DV_U, DV_M, DV_H, DV_E, DV_M, DV_H, DV_O});
@@ -1140,7 +1144,7 @@ TEST(DvorakjpTest, MyTest) {
     // 撥音拡張(my)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_M, DV_Y, DV_SCLN, DV_M, DV_Y, DV_X, DV_M, DV_Y, DV_K, DV_M, DV_Y, DV_J, DV_M, DV_Y, DV_Q});
-    ASSERT_STREQ("myannmyinnmyunnmyennmyonn", send_string_output);
+    ASSERT_STRNE("myannmyinnmyunnmyennmyonn", send_string_output);
     // 撥音拡張(mh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_M, DV_H, DV_SCLN, DV_M, DV_H, DV_X, DV_M, DV_H, DV_K, DV_M, DV_H, DV_J, DV_M, DV_H, DV_Q});
@@ -1152,7 +1156,7 @@ TEST(DvorakjpTest, MyTest) {
     // 二重母音拡張(my)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_M, DV_Y, DV_QUOT, DV_M, DV_Y, DV_DOT, DV_M, DV_Y, DV_COMM});
-    ASSERT_STREQ("myaimyeimyou", send_string_output);
+    ASSERT_STRNE("myaimyeimyou", send_string_output);
     // 二重母音拡張(mh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_M, DV_H, DV_QUOT, DV_M, DV_H, DV_DOT, DV_M, DV_H, DV_COMM});
@@ -1168,7 +1172,7 @@ TEST(DvorakjpTest, YTest) {
     // 通常(y)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Y, DV_A, DV_Y, DV_U, DV_Y, DV_O});
-    ASSERT_STREQ("yayuyo", send_string_output);
+    ASSERT_STRNE("yayuyo", send_string_output);
     // 通常(f)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_F, DV_A, DV_F, DV_U, DV_F, DV_O});
@@ -1176,31 +1180,43 @@ TEST(DvorakjpTest, YTest) {
     // 通常(xy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_X, DV_Y, DV_A, DV_X, DV_Y, DV_U, DV_X, DV_Y, DV_O});
-    ASSERT_STREQ("xyaxyuxyo", send_string_output);
+    ASSERT_STRNE("xyaxyuxyo", send_string_output);
     // 通常(xh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_X, DV_H, DV_A, DV_X, DV_H, DV_U, DV_X, DV_H, DV_O});
     ASSERT_STREQ("xyaxyuxyo", send_string_output);
-    // 通常(y)
-    DvorakjpTest::ClearOutput();
-    DvorakjpTest::Input({DV_Y, DV_A, DV_Y, DV_U, DV_Y, DV_O});
-    ASSERT_STREQ("yayuyo", send_string_output);
-    // 撥音拡張
+    // 撥音拡張(y)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Y, DV_SCLN, DV_Y, DV_K, DV_Y, DV_Q});
+    ASSERT_STRNE("yannyunnyonn", send_string_output);
+    // 撥音拡張(f)
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input({DV_F, DV_SCLN, DV_F, DV_K, DV_F, DV_Q});
     ASSERT_STREQ("yannyunnyonn", send_string_output);
     // 撥音拡張(xy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_X, DV_Y, DV_SCLN, DV_X, DV_Y, DV_K, DV_X, DV_Y, DV_Q});
+    ASSERT_STRNE("xyannxyunnxyonn", send_string_output);
+    // 撥音拡張(xh)
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input({DV_X, DV_H, DV_SCLN, DV_X, DV_H, DV_K, DV_X, DV_H, DV_Q});
     ASSERT_STREQ("xyannxyunnxyonn", send_string_output);
-    // 二重母音拡張
+    // 二重母音拡張(y)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Y, DV_QUOT, DV_Y, DV_COMM});
-    ASSERT_STREQ("yaiyou", send_string_output);
+    ASSERT_STRNE("yaiyou", send_string_output);
+    // 二重母音拡張(f)
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input({DV_F, DV_QUOT, DV_F, DV_Y, DV_F, DV_P, DV_F, DV_COMM});
+    ASSERT_STREQ("yaiyuiyuuyou", send_string_output);
     // 二重母音拡張(xy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_X, DV_Y, DV_QUOT, DV_X, DV_Y, DV_COMM});
-    ASSERT_STREQ("xyaixyou", send_string_output);
+    ASSERT_STRNE("xyaixyou", send_string_output);
+    // 二重母音拡張(xh)
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input({DV_X, DV_H, DV_QUOT, DV_X, DV_H, DV_Y, DV_X, DV_H, DV_P, DV_X, DV_H, DV_COMM});
+    ASSERT_STREQ("xyaixyuixyuuxyou", send_string_output);
 }
 
 // ら行
@@ -1224,7 +1240,7 @@ TEST(DvorakjpTest, RyTest) {
     // 通常(ry)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_R, DV_Y, DV_A, DV_R, DV_Y, DV_I, DV_R, DV_Y, DV_U, DV_R, DV_Y, DV_E, DV_R, DV_Y, DV_O});
-    ASSERT_STREQ("ryaryiryuryeryo", send_string_output);
+    ASSERT_STRNE("ryaryiryuryeryo", send_string_output);
     // 通常(rh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_R, DV_H, DV_A, DV_R, DV_H, DV_I, DV_R, DV_H, DV_U, DV_R, DV_H, DV_E, DV_R, DV_H, DV_O});
@@ -1236,7 +1252,7 @@ TEST(DvorakjpTest, RyTest) {
     // 撥音拡張(ry)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_R, DV_Y, DV_SCLN, DV_R, DV_Y, DV_X, DV_R, DV_Y, DV_K, DV_R, DV_Y, DV_J, DV_R, DV_Y, DV_Q});
-    ASSERT_STREQ("ryannryinnryunnryennryonn", send_string_output);
+    ASSERT_STRNE("ryannryinnryunnryennryonn", send_string_output);
     // 撥音拡張(rh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_R, DV_H, DV_SCLN, DV_R, DV_H, DV_X, DV_R, DV_H, DV_K, DV_R, DV_H, DV_J, DV_R, DV_H, DV_Q});
@@ -1248,7 +1264,7 @@ TEST(DvorakjpTest, RyTest) {
     // 二重母音拡張(ry)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_R, DV_Y, DV_QUOT, DV_R, DV_Y, DV_DOT, DV_R, DV_Y, DV_COMM});
-    ASSERT_STREQ("ryairyeiryou", send_string_output);
+    ASSERT_STRNE("ryairyeiryou", send_string_output);
     // 二重母音拡張(rh)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_R, DV_H, DV_QUOT, DV_R, DV_H, DV_DOT, DV_R, DV_H, DV_COMM});
@@ -1277,7 +1293,7 @@ TEST(DvorakjpTest, WTest) {
     // 通常(wy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_W, DV_Y, DV_I, DV_W, DV_Y, DV_E});
-    ASSERT_STREQ("wyiwye", send_string_output);
+    ASSERT_STRNE("wyiwye", send_string_output);
     // 通常(wh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_W, DV_H, DV_I, DV_W, DV_H, DV_E});
@@ -1289,7 +1305,7 @@ TEST(DvorakjpTest, WTest) {
     // 撥音拡張(wy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_W, DV_Y, DV_X, DV_W, DV_Y, DV_J});
-    ASSERT_STREQ("wyinnwyenn", send_string_output);
+    ASSERT_STRNE("wyinnwyenn", send_string_output);
     // 撥音拡張(wh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_W, DV_H, DV_X, DV_W, DV_H, DV_J});
@@ -1301,7 +1317,7 @@ TEST(DvorakjpTest, WTest) {
     // 二重母音拡張(wy)
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_W, DV_Y, DV_DOT});
-    ASSERT_STREQ("wyei", send_string_output);
+    ASSERT_STRNE("wyei", send_string_output);
     // 二重母音拡張(wh) ※変換しない
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_W, DV_H, DV_DOT});
@@ -1322,10 +1338,14 @@ TEST(DvorakjpTest, XtuTest) {
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_X, DV_T, DV_K});
     ASSERT_STREQ("xtunn", send_string_output);
+    // 撥音
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input({DV_X, DV_T, DV_U, DV_K});
+    ASSERT_STREQ("xtunn", send_string_output);
     // 各子音
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_K, DV_K, DV_QUOT});
-    ASSERT_STREQ("kkai", send_string_output);
+    ASSERT_STRNE("kkai", send_string_output);
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_C, DV_C, DV_QUOT});
     ASSERT_STREQ("kkai", send_string_output);
@@ -1362,7 +1382,7 @@ TEST(DvorakjpTest, XtuTest) {
     ASSERT_STREQ("vvai", send_string_output);
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_P, DV_P, DV_QUOT});
-    ASSERT_STREQ("ppai", send_string_output);
+    ASSERT_STRNE("ppai", send_string_output);
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_L, DV_L, DV_QUOT});
     ASSERT_STREQ("ppai", send_string_output);
@@ -1371,7 +1391,7 @@ TEST(DvorakjpTest, XtuTest) {
     ASSERT_STREQ("mmai", send_string_output);
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_Y, DV_Y, DV_QUOT});
-    ASSERT_STREQ("yyai", send_string_output);
+    ASSERT_STRNE("yyai", send_string_output);
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_R, DV_R, DV_QUOT});
     ASSERT_STREQ("rrai", send_string_output);
@@ -1381,6 +1401,24 @@ TEST(DvorakjpTest, XtuTest) {
     DvorakjpTest::ClearOutput();
     DvorakjpTest::Input({DV_H, DV_H, DV_W, DV_QUOT});
     ASSERT_STREQ("ffai", send_string_output);
+}
+
+// - /
+TEST(DvorakjpTest, SymbolsTest) {
+    // 通常
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input({DV_P, DV_P, DV_P});
+    ASSERT_STREQ("---", send_string_output);
+    // 撥音拡張
+    DvorakjpTest::ClearOutput();
+    DvorakjpTest::Input({DV_Y, DV_Y, DV_Y});
+    ASSERT_STREQ("///", send_string_output);
+    // ～
+    DvorakjpTest::ClearOutput();
+    is_shifted = true;
+    DvorakjpTest::Input({DV_K, DV_K, DV_K});
+    is_shifted = false;
+    ASSERT_STREQ("```", send_string_output);
 }
 
 // TODO: 下記のテストが足りない

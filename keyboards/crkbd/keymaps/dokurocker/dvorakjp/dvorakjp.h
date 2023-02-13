@@ -13,6 +13,8 @@
 #include "keymap.h"
 #endif
 
+// シフト押下時に動作変える場合に利用
+#define DV_SHIFT (DV_Z - DV_1)
 
 /*
 dvorakjp拡張ビットフラグ

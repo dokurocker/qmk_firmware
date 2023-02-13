@@ -1,11 +1,14 @@
 #include "dvorakjp.h"
 
 static roma roma_list[] = {
-    {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 1, 2}, {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 53, 53},
+    {DV_P, X2HEX_EX6(X_P), X2HEX(X_MINUS) - X_MASK, 0, 1},
+    {DV_Y, X2HEX_EX6(X_Y), X2HEX(X_SLASH) - X_MASK, 0, 1},
+    {DV_K + DV_SHIFT, X2HEX_EX6(X_K), X2HEX(X_GRAVE) - X_MASK, 0, 1},
+    {DV_K, X2HEX_EX7(X_N), X2HEX(X_N), 0, 1},
     // f は y に変更
-    {DV_F, X2HEX_EX5(X_F), X2HEX(X_Y), 1, 4}, {DV_F, X2HEX_EX5(X_F), X2HEX(X_Y), 1, 1},
-    // f,ff の次が y,n だったら fy,ffy にする(フャ行)
-    {DV_Y, X2HEX_EX4(X_Y), X2HEX(X_Y), 49, 1}, {DV_N, X2HEX_EX4(X_N), X2HEX(X_Y), 48, 48-4},
+    {DV_F, X2HEX_EX5(X_F), X2HEX(X_Y), 1, 3}, {DV_F, X2HEX_EX5(X_F), X2HEX(X_Y), 1, 1},
+    // f,ff の次が n だったら fy,ffy にする(フャ行)
+    {DV_N, X2HEX_EX4(X_N), X2HEX(X_Y), 48, 48-4},
     // 単一のN（ん）の後の子音をチェックできるように0xfeで特別な対応（UNNCO -> UNCOと打てるように）
     {DV_N, X2HEX_EX2(X_N), X2HEX(X_N), 47-2, 1},
     // 子音
@@ -19,7 +22,7 @@ static roma roma_list[] = {
     {DV_W, X2HEX_EX4(X_W), X2HEX(X_UNDEF), 37-4, 37-4},
 
     {DV_B, X2HEX(X_B), X2HEX(X_B), 1, 2}, {DV_B, X2HEX(X_B), X2HEX(X_B), 35-4, 35-4},
-    {DV_M, X2HEX(X_M), X2HEX(X_M), 1, 2}, {DV_M, X2HEX(X_M), X2HEX(X_M), 33-4, 33-4},
+    {DV_M, X2HEX(X_M), X2HEX(X_M), 1, 4}, {DV_M, X2HEX(X_M), X2HEX(X_M), 33-4, 33-4},
     // h を y にする
     {DV_P, X2HEX(X_P), X2HEX(X_P), 1, 2}, {DV_P, X2HEX(X_P), X2HEX(X_P), 31-2, 31-2},
     {DV_R, X2HEX(X_R), X2HEX(X_R), 1, 2}, {DV_R, X2HEX(X_R), X2HEX(X_R), 29-2, 29-2},
@@ -38,9 +41,9 @@ static roma roma_list[] = {
     {DV_C, X2HEX(X_C), X2HEX(X_K), 9, 1}, {DV_K, X2HEX(X_K), X2HEX(X_K), 8, 1}, {DV_T, X2HEX(X_T), X2HEX(X_T), 7, 5},
     {DV_H, X2HEX(X_H), X2HEX(X_H), 6, 1}, // テャ,デャ,ウァ行([tdw]h)
     {DV_W, X2HEX(X_W), X2HEX(X_W), 5, 1}, // クァ,グァ,トァ,ドァ[cgtd]w
-    {DV_N, X2HEX(X_N), X2HEX(X_Y), 4, 3},
+    {DV_N, X2HEX(X_N), X2HEX(X_Y), 4, 4},
     {DV_W, X2HEX(X_W), X2HEX(X_W), 3, 1}, // クァ,スァ,ズァ,ヮ[kqszx]w(xwa)
-    {DV_H, X2HEX(X_H), X2HEX(X_Y), 2, 1},
+    {DV_H, X2HEX(X_H), X2HEX(X_Y), 2, 2},
     {DV_Y, X2HEX(X_Y), X2HEX(X_Y), 1, 1},
     // 母音
     {DV_A, X2HEX(X_A), X2HEX(X_A), 0, 1}, {DV_I, X2HEX(X_I), X2HEX(X_I), 0, 1}, {DV_U, X2HEX(X_U), X2HEX(X_U), 0, 1}, {DV_E, X2HEX(X_E), X2HEX(X_E), 0, 1}, {DV_O, X2HEX(X_O), X2HEX(X_O), 0, 1},
@@ -48,6 +51,8 @@ static roma roma_list[] = {
     {DV_QUOT, X2HEX_EX1(X_I), X2HEX(X_A), 0, 1},
     {DV_COMM, X2HEX_EX1(X_U), X2HEX(X_O), 0, 1},
     {DV_DOT, X2HEX_EX1(X_I), X2HEX(X_E), 0, 1},
+    {DV_P, X2HEX_EX1(X_U), X2HEX(X_U), 0, 1},
+    {DV_Y, X2HEX_EX1(X_I), X2HEX(X_U), 0, 1},
     {DV_SCLN, X2HEX_EX1(X_N), X2HEX(X_A), 0, 1},
     {DV_Q, X2HEX_EX1(X_N), X2HEX(X_O), 0, 1}, 
     {DV_J, X2HEX_EX1(X_N), X2HEX(X_E), 0, 1},
@@ -96,7 +101,10 @@ void reset_dvorakjp_variables(void)
 bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
 {
     while (1) {
-        if (current->keycode == keycode) {
+#ifndef DOKU_MOCKED
+        bool is_shifted = (keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) != 0x0;
+#endif
+        if (current->keycode == keycode || (current->keycode == keycode + DV_SHIFT && is_shifted)) {
             char raw = current->raw & X_MASK;
             char dvorakjp = current->dvorakjp & X_MASK;
             bool is_vowels_expantion = (current->raw & ~X_MASK) == EX1_BIT;
@@ -104,7 +112,13 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
             bool is_like_combo_a = (current->raw & ~X_MASK) == EX3_BIT;
             bool is_like_combo_b = (current->raw & ~X_MASK) == EX5_BIT;
             bool is_like_combo_end = (current->raw & ~X_MASK) == EX4_BIT;
-            if (raw_count > 0 || raw != dvorakjp || is_like_combo_a || is_like_combo_b) {
+            bool is_symbol = (current->raw & ~X_MASK) == EX6_BIT;
+            bool is_k_to_nn = (current->raw & ~X_MASK) == EX7_BIT;
+            if (is_symbol) {
+                // TODO: Shiftキーは有効になるか、うまく動くかは焼いてみないとわからない
+                dvorakjp = dvorakjp + X_MASK;
+            }
+            if (raw_count > 0 || is_vowels_expantion || raw != dvorakjp || is_like_combo_a || is_like_combo_b || is_k_to_nn) {
                 if (is_like_combo_a) {
                     // 疑似コンボ開始
                     is_prev_like_combo_a = true;
@@ -157,6 +171,11 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
                 if (djp_stack[djp_count] == X2HEX(X_N)) {
                     djp_stack[++djp_count] = X2HEX(X_N);
                 }
+                djp_stack[++djp_count] = '\0';
+            }
+            if (is_k_to_nn) {
+                // 二重母音拡張と撥音拡張
+                djp_stack[djp_count] = raw;
                 djp_stack[++djp_count] = '\0';
             }
             if (djp_count > 0) {
