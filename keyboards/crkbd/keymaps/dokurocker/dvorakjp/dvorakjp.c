@@ -3,6 +3,7 @@
 static roma roma_list[] = {
     {DV_P, X2HEX_EX6(X_P), X2HEX(X_MINUS) - X_MASK, 0, 1},
     {DV_Y, X2HEX_EX6(X_Y), X2HEX(X_SLASH) - X_MASK, 0, 1},
+    // TODO: 日本語キーボードだとX_GRAVEが全半角キーになった
     {DV_K + DV_SHIFT, X2HEX_EX6(X_K), X2HEX(X_GRAVE) - X_MASK, 0, 1},
     {DV_K, X2HEX_EX7(X_N), X2HEX(X_N), 0, 1},
     // f は y に変更
@@ -13,32 +14,34 @@ static roma roma_list[] = {
     {DV_N, X2HEX_EX2(X_N), X2HEX(X_N), 47-2, 1},
     // 子音
     // n を y にする
-    {DV_G, X2HEX(X_G), X2HEX(X_G), 1, 2}, {DV_G, X2HEX(X_G), X2HEX(X_G), 46-5, 46-5},
-    {DV_C, X2HEX(X_C), X2HEX(X_K), 1, 2}, {DV_C, X2HEX(X_C), X2HEX(X_K), 44-5, 44-5},
-    {DV_D, X2HEX(X_D), X2HEX(X_D), 1, 2}, {DV_D, X2HEX(X_D), X2HEX(X_D), 42-6, 42-6},
-    {DV_T, X2HEX(X_T), X2HEX(X_T), 1, 2}, {DV_T, X2HEX(X_T), X2HEX(X_T), 40-10, 40-10},
+    {DV_G, X2HEX(X_G), X2HEX(X_G), 1, 2}, {DV_G, X2HEX(X_G), X2HEX(X_G), 45-5, 45-5},
+    {DV_C, X2HEX(X_C), X2HEX(X_K), 1, 2}, {DV_C, X2HEX(X_C), X2HEX(X_K), 43-5, 43-5},
+    {DV_D, X2HEX(X_D), X2HEX(X_D), 1, 2}, {DV_D, X2HEX(X_D), X2HEX(X_D), 41-6, 41-6},
+    {DV_T, X2HEX(X_T), X2HEX(X_T), 1, 2}, {DV_T, X2HEX(X_T), X2HEX(X_T), 39-11, 39-11},
     {DV_H, X2HEX_EX3(X_H), X2HEX(X_F), 1, 3}, {DV_H, X2HEX_EX3(X_H), X2HEX(X_F), 1, 1},
     // h,hh の次が w だったら hw,hhw は f,ff にする(ファ行)
-    {DV_W, X2HEX_EX4(X_W), X2HEX(X_UNDEF), 37-4, 37-4},
+    {DV_W, X2HEX_EX4(X_W), X2HEX(X_UNDEF), 36-4, 36-4},
 
-    {DV_B, X2HEX(X_B), X2HEX(X_B), 1, 2}, {DV_B, X2HEX(X_B), X2HEX(X_B), 35-4, 35-4},
-    {DV_M, X2HEX(X_M), X2HEX(X_M), 1, 4}, {DV_M, X2HEX(X_M), X2HEX(X_M), 33-4, 33-4},
+    {DV_B, X2HEX(X_B), X2HEX(X_B), 1, 2}, {DV_B, X2HEX(X_B), X2HEX(X_B), 34-4, 34-4},
+    {DV_M, X2HEX(X_M), X2HEX(X_M), 1, 2}, {DV_M, X2HEX(X_M), X2HEX(X_M), 32-4, 32-4},
     // h を y にする
-    {DV_P, X2HEX(X_P), X2HEX(X_P), 1, 2}, {DV_P, X2HEX(X_P), X2HEX(X_P), 31-2, 31-2},
-    {DV_R, X2HEX(X_R), X2HEX(X_R), 1, 2}, {DV_R, X2HEX(X_R), X2HEX(X_R), 29-2, 29-2},
-    {DV_L, X2HEX(X_L), X2HEX(X_P), 1, 2}, {DV_L, X2HEX(X_L), X2HEX(X_P), 27-2, 27-2},
-    {DV_S, X2HEX(X_S), X2HEX(X_S), 1, 2}, {DV_S, X2HEX(X_S), X2HEX(X_S), 25-3, 25-3},
-    {DV_Q, X2HEX(X_Q), X2HEX(X_Q), 1, 2}, {DV_Q, X2HEX(X_Q), X2HEX(X_Q), 23-3, 23-3},
-    {DV_J, X2HEX(X_J), X2HEX(X_J), 1, 2}, {DV_J, X2HEX(X_J), X2HEX(X_J), 21-2, 21-2},
-    {DV_K, X2HEX(X_K), X2HEX(X_K), 1, 2}, {DV_K, X2HEX(X_K), X2HEX(X_K), 19-3, 19-3},
-    {DV_X, X2HEX(X_X), X2HEX(X_X), 1, 2}, {DV_X, X2HEX(X_X), X2HEX(X_X), 17-9, 17-9},
-    {DV_W, X2HEX(X_W), X2HEX(X_W), 1, 2}, {DV_W, X2HEX(X_W), X2HEX(X_W), 15-6, 15-6},
-    {DV_V, X2HEX(X_V), X2HEX(X_V), 1, 2}, {DV_V, X2HEX(X_V), X2HEX(X_V), 13-2, 13-2},
-    {DV_Z, X2HEX(X_Z), X2HEX(X_Z), 1, 0}, {DV_Z, X2HEX(X_Z), X2HEX(X_Z), 11-3, 11-3},
+    //{DV_P, X2HEX(X_P), X2HEX(X_P), 1, 2}, {DV_P, X2HEX(X_P), X2HEX(X_P), 31-2, 31-2},
+    {DV_R, X2HEX(X_R), X2HEX(X_R), 1, 2}, {DV_R, X2HEX(X_R), X2HEX(X_R), 30-2, 30-2},
+    {DV_L, X2HEX(X_L), X2HEX(X_P), 1, 2}, {DV_L, X2HEX(X_L), X2HEX(X_P), 28-2, 28-2},
+    {DV_S, X2HEX(X_S), X2HEX(X_S), 1, 2}, {DV_S, X2HEX(X_S), X2HEX(X_S), 26-3, 26-3},
+    {DV_Q, X2HEX(X_Q), X2HEX(X_Q), 1, 2}, {DV_Q, X2HEX(X_Q), X2HEX(X_Q), 24-3, 24-3},
+    {DV_J, X2HEX(X_J), X2HEX(X_J), 1, 2}, {DV_J, X2HEX(X_J), X2HEX(X_J), 22-2, 22-2},
+    {DV_K, X2HEX(X_K), X2HEX(X_K), 1, 2}, {DV_K, X2HEX(X_K), X2HEX(X_K), 20-3, 20-3},
+    {DV_X, X2HEX(X_X), X2HEX(X_X), 1, 2}, {DV_X, X2HEX(X_X), X2HEX(X_X), 18-10, 18-10},
+    {DV_W, X2HEX(X_W), X2HEX(X_W), 1, 2}, {DV_W, X2HEX(X_W), X2HEX(X_W), 16-6, 16-6},
+    {DV_V, X2HEX(X_V), X2HEX(X_V), 1, 2}, {DV_V, X2HEX(X_V), X2HEX(X_V), 14-2, 14-2},
+    {DV_Z, X2HEX(X_Z), X2HEX(X_Z), 1, 0}, {DV_Z, X2HEX(X_Z), X2HEX(X_Z), 12-3, 12-3},
     // 拗音
-    {DV_S, X2HEX(X_S), X2HEX(X_S), 10, 4},  // ツァ行(ts)
+    {DV_S, X2HEX(X_S), X2HEX(X_S), 11, 5},  // ツァ行(ts)
     // ヵ,ヶ,っ x[ck](xca xka xce xke) xt(xtu)
-    {DV_C, X2HEX(X_C), X2HEX(X_K), 9, 1}, {DV_K, X2HEX(X_K), X2HEX(X_K), 8, 1}, {DV_T, X2HEX(X_T), X2HEX(X_T), 7, 5},
+    {DV_C, X2HEX(X_C), X2HEX(X_K), 10, 1}, {DV_K, X2HEX(X_K), X2HEX(X_K), 9, 1}, {DV_T, X2HEX(X_T), X2HEX(X_T), 8, 1},
+    // ゃ行
+    {DV_F, X2HEX(X_F), X2HEX(X_Y), 7, 4},
     {DV_H, X2HEX(X_H), X2HEX(X_H), 6, 1}, // テャ,デャ,ウァ行([tdw]h)
     {DV_W, X2HEX(X_W), X2HEX(X_W), 5, 1}, // クァ,グァ,トァ,ドァ[cgtd]w
     {DV_N, X2HEX(X_N), X2HEX(X_Y), 4, 4},
@@ -102,6 +105,7 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
 {
     while (1) {
 #ifndef DOKU_MOCKED
+        // シフト押されている場合に動作変更、テスト時ほ直接セット
         bool is_shifted = (keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) != 0x0;
 #endif
         if (current->keycode == keycode || (current->keycode == keycode + DV_SHIFT && is_shifted)) {
@@ -115,7 +119,6 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
             bool is_symbol = (current->raw & ~X_MASK) == EX6_BIT;
             bool is_k_to_nn = (current->raw & ~X_MASK) == EX7_BIT;
             if (is_symbol) {
-                // TODO: Shiftキーは有効になるか、うまく動くかは焼いてみないとわからない
                 dvorakjp = dvorakjp + X_MASK;
             }
             if (raw_count > 0 || is_vowels_expantion || raw != dvorakjp || is_like_combo_a || is_like_combo_b || is_k_to_nn) {
@@ -157,9 +160,7 @@ bool dvorakjp(uint16_t keycode, uint8_t tapping_term)
             }
             if (is_nagyou_possibility) {
                 // 次の入力で「な」行チェック
-                //current = line_na;
                 next = current + current->miss;
-                //return raw_count > 0;
             }
             if (current->hit > 0) {
                 current = current + current->hit;

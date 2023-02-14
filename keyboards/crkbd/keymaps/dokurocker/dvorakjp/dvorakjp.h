@@ -19,7 +19,6 @@
 /*
 dvorakjp拡張ビットフラグ
 romaのraw,dvorakjpの上位ビットで使う
-2+3x3の11パターン設定可能
 */
 #define EX1_BIT 0x20
 #define EX2_BIT 0x40
@@ -51,9 +50,7 @@ dvorakjp用マクロ
 struct _roma {
     uint16_t keycode;
     char raw;
-    // 0x00 スタックに積まない
     char dvorakjp;
-    // 0x00 - 0x7f 通常のステップ 0x80以降 特別対応
     char hit;
     char miss;
 };
