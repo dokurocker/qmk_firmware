@@ -15,6 +15,7 @@
 
 // シフト押下時に動作変える場合に利用
 #define DV_SHIFT (DV_Z - DV_1)
+#define DV_CONTINUE (DV_Z + DV_SHIFT + 1)
 
 /*
 dvorakjp拡張ビットフラグ

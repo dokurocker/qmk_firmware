@@ -1430,7 +1430,7 @@ TEST(DvorakjpTest, SymbolsTest) {
     is_shifted = true;
     DvorakjpTest::Input({DV_K, DV_K, DV_K});
     is_shifted = false;
-    ASSERT_STREQ("```", send_string_output);
+    ASSERT_STREQ("===", send_string_output);
 }
 
 // TODO: 下記のテストが足りない

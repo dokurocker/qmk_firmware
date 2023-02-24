@@ -20,5 +20,8 @@ void send_string(const char *string) {
     } else if (string[2] == 0x35) {
         // == `
         send_string_output[send_string_output_index++] = '`';
+    } else if (string[2] == 0x2e) {
+        // == =
+        send_string_output[send_string_output_index++] = '=';
     }
 }
