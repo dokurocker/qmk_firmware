@@ -75,11 +75,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_ADJUST] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-        RESET, XXXXXXX, XXXXXXX,KC_BS_SWI,KC_DVORAK,KC_QWERTY,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      QK_BOOT, XXXXXXX, XXXXXXX,KC_BS_SWI,KC_DVORAK,KC_QWERTY,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      RM_TOGG, RM_HUEU, RM_SATU, RM_VALU, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      RM_NEXT, RM_HUED, RM_SATD, RM_VALD, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LSFT, _______,  KC_SPC,     KC_ENT, _______, KC_RSFT
                                       //`--------------------------'  `--------------------------'
@@ -194,7 +194,7 @@ bool input_zenhankaku(uint16_t keycode, bool pressed) {
                 want_hankaku = true;
             } else {
                 if (want_hankaku) {
-                    tap_code(KC_MHEN); // macOS の場合は KC_LANG2
+                    tap_code(KC_INT5); // macOS の場合は KC_LANG2
                     want_hankaku = false;
                 }
             }
@@ -208,7 +208,7 @@ bool input_zenhankaku(uint16_t keycode, bool pressed) {
                 want_zenkaku = true;
             } else {
                 if (want_zenkaku) {
-                    tap_code(KC_HENK); // macOS の場合は KC_LANG2
+                    tap_code(KC_INT4); // macOS の場合は KC_LANG2
                     want_zenkaku = false;
                 }
             }

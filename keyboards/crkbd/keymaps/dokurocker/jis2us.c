@@ -136,7 +136,7 @@ bool input_jis2us(uint16_t keycode, bool pressed)
             }
             return true;
         case JU_2:
-            set_jis2us_key_info(&current_jis2us_key_info, KC_2, false, KC_LBRACKET, false);
+            set_jis2us_key_info(&current_jis2us_key_info, KC_2, false, KC_LBRC, false);
             register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_6:
@@ -164,11 +164,11 @@ bool input_jis2us(uint16_t keycode, bool pressed)
             register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_EQL:
-            set_jis2us_key_info(&current_jis2us_key_info, KC_MINUS, true, KC_SCOLON, true);
+            set_jis2us_key_info(&current_jis2us_key_info, KC_MINUS, true, KC_SCLN, true);
             register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_LBRC:
-            set_jis2us_key_info(&current_jis2us_key_info, KC_RBRACKET, false, KC_RBRACKET, true);
+            set_jis2us_key_info(&current_jis2us_key_info, KC_RBRC, false, KC_RBRC, true);
             register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_RBRC:
@@ -180,7 +180,7 @@ bool input_jis2us(uint16_t keycode, bool pressed)
             register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_SCLN:
-            set_jis2us_key_info(&current_jis2us_key_info, KC_SCOLON, false, KC_QUOTE, false);
+            set_jis2us_key_info(&current_jis2us_key_info, KC_SCLN, false, KC_QUOTE, false);
             register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_QUOT:
@@ -188,7 +188,7 @@ bool input_jis2us(uint16_t keycode, bool pressed)
             register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         case JU_GRV:
-            set_jis2us_key_info(&current_jis2us_key_info, KC_LBRACKET, true, KC_EQUAL, true);
+            set_jis2us_key_info(&current_jis2us_key_info, KC_LBRC, true, KC_EQUAL, true);
             register_jis2us(&current_jis2us_key_info, pressed, mods);
             return true;
         default:
