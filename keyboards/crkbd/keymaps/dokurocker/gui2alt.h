@@ -1,6 +1,7 @@
 /*
 Winキーを一緒に押したキー次第でaltにする
 */
+#pragma once
 
 #include "keymap.h"
 

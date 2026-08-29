@@ -27,6 +27,7 @@ const static uint8_t DIT_ADD = 100;
 static uint16_t dvorakjp_timeout = 1000;
 static uint16_t dvorakjp_idle_time = 0;
 static bool dvorakjp_idle = false;
+static uint8_t deleted_mods = 0x0;
 
 bool is_dvorakjp(void)
 {
@@ -93,6 +94,11 @@ void reset_dvorakjp(bool is_force)
     }
 }
 
+void reset_deleted_mods()
+{
+    deleted_mods = 0x0;
+}
+
 bool input_dvorak(uint16_t* keycode, bool pressed)
 {
     switch(*keycode) {
@@ -110,10 +116,33 @@ bool input_dvorak(uint16_t* keycode, bool pressed)
     if (*keycode < DV_1 || DV_Z < *keycode) {
         return true;
     }
-    // shiftのみはdvorak配列
-    bool mods = (keyboard_report->mods & ~(MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT))) != 0x0;
+    // shift、altはdvorak配列
+    bool mods = (keyboard_report->mods & MOD_MASK_CG) != 0x0;
     uint16_t key = d2q_map[*keycode - DV_1][mods ? 1 : 0];
     static uint16_t pressed_custum_key = XXXXXXX;
+
+    if (pressed) {
+        if (deleted_mods != 0x0 && (d2q_map[*keycode - DV_1][1] == KC_BSPC || d2q_map[*keycode - DV_1][1] == KC_DEL)) {
+            key = d2q_map[*keycode - DV_1][1];
+            mods = true;
+        }
+        if (key == KC_BSPC || key == KC_DEL) {
+            if (deleted_mods == 0x0 && (keyboard_report->mods & MOD_MASK_CTRL) != 0x0) {
+                deleted_mods = keyboard_report->mods & MOD_MASK_CTRL;
+                del_mods(deleted_mods);
+            }
+        } else {
+            if (deleted_mods != 0x0) {
+                add_mods(deleted_mods);
+                deleted_mods = 0x0;
+            }
+        }
+    } else {
+        if (deleted_mods != 0x0) {
+            key = d2q_map[*keycode - DV_1][1];
+            mods = true;
+        }
+    }
 
     if (enabled_dvorakjp && !mods && pressed) {
         dvorakjp_idle_time = timer_read();
